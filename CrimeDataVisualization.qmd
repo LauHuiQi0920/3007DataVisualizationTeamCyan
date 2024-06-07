@@ -4,20 +4,99 @@ format: html
 editor: visual
 ---
 
-## Quarto
+## 3007 Team Cyan Group Project
 
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+Kahbelan
 
-## Running Code
+Yee Kit
 
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+Douglas
+
+Joel
+
+Hui Qi
+
+Kai Boon
+
+## Main code
 
 ```{r}
-```
+# Load necessary libraries
+library(dplyr)
 
-You can add options to executable code like this
+library(readxl)
+```
 
 ```{r}
+#| label: data import
+#| output: false
+# Set the path to the CSV file
+file_path <- "Crime_Data_from_2020_to_Present_20240607.csv"
+
+# Read the CSV file into a data frame
+crime_data <- read.csv(file_path)
+
+# View the first few rows of the data
+head(crime_data)
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+```{r}
+#| label: data-cleaning - keep selected column
+#| outpu: false
+
+crime_data <- crime_data |>
+  select(Date.Rptd, DATE.OCC, TIME.OCC, AREA, AREA.NAME, Rpt.Dist.No, Crm.Cd, Crm.Cd.Desc, Crm.Cd.1, Crm.Cd.2, Crm.Cd.3, Crm.Cd.4, LOCATION, Cross.Street, LAT, LON)
+
+# View the first few rows of the modified data
+head(crime_data)
+```
+
+```{r}
+#| label: data cleaning - remove rows if null for certain column, remove multiple spaces if any
+
+# Remove rows with NA values in the specified columns
+cleaned_crime_data <- crime_data %>%
+  filter(
+    !is.na(Date.Rptd) &
+    !is.na(DATE.OCC) &
+    !is.na(TIME.OCC) &
+    !is.na(AREA) &
+    !is.na(AREA.NAME) &
+    !is.na(Rpt.Dist.No) &
+    !is.na(LOCATION) &
+    !is.na(LAT) &
+    !is.na(LON)
+  )
+
+# Function to replace multiple spaces with a single space in a string
+replace_multiple_spaces <- function(x) {
+  gsub("\\s+", " ", x)
+}
+
+# Apply the function to all character columns in the data frame
+cleaned_crime_data <- cleaned_crime_data %>%
+  mutate(across(where(is.character), replace_multiple_spaces))
+
+# View the first few rows of the cleaned data
+head(cleaned_crime_data)
+```
+
+```{r}
+#| label: data-formating
+
+# Convert DATE.OCC to Date format
+cleaned_crime_data$DATE.OCC <- as.Date(cleaned_crime_data$DATE.OCC, format="%m/%d/%Y %I:%M:%S %p")
+
+# Extract month and year from DATE.OCC
+cleaned_crime_data <- cleaned_crime_data %>%
+  mutate(
+    DATE.OCC.MONTH = month(DATE.OCC),
+    DATE.OCC.YEAR = year(DATE.OCC)
+  )
+
+cleaned_crime_data <- cleaned_crime_data %>%
+  select(Date.Rptd, DATE.OCC, DATE.OCC.MONTH, DATE.OCC.YEAR, everything())
+
+# View the first few rows of the cleaned data with new columns
+head(cleaned_crime_data)
+```
