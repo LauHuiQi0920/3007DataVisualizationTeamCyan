@@ -25,6 +25,8 @@ Kai Boon
 library(dplyr)
 
 library(readxl)
+library(lubridate)
+library(DT)
 ```
 
 ```{r}
@@ -98,5 +100,32 @@ cleaned_crime_data <- cleaned_crime_data %>%
   select(Date.Rptd, DATE.OCC, DATE.OCC.MONTH, DATE.OCC.YEAR, everything())
 
 # View the first few rows of the cleaned data with new columns
-head(cleaned_crime_data)
+datatable(head(cleaned_crime_data))
 ```
+
+```{r}
+#| label: data-preparation
+#| message: false
+
+#Counts of crime in each area
+crime_counts_by_area <- cleaned_crime_data %>%
+  group_by(AREA, AREA.NAME) %>%
+  summarise(Crime_Count = n(), .groups = 'drop')
+
+crime_counts_by_area
+
+
+```
+
+```{r}
+#Based of crime code, find top 5 crime codes and the corresponding crime description based on each area
+top_crime_codes_by_area <- cleaned_crime_data %>%
+  group_by(AREA, AREA.NAME, Crm.Cd, Crm.Cd.Desc) %>%
+  summarise(Crime_Count = n(), .groups = 'drop') %>%
+  arrange(desc(Crime_Count)) %>%
+  group_by(AREA, AREA.NAME) %>%
+  slice_head(n = 5)
+
+top_crime_codes_by_area
+```
+
