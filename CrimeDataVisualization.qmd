@@ -129,3 +129,34 @@ top_crime_codes_by_area <- cleaned_crime_data %>%
 top_crime_codes_by_area
 ```
 
+```{r}
+#| label: data-visualisation
+#| message: false
+
+#Plot the number of crimes in each area in a map
+library(ggplot2)
+#Plot the number of crimes in each area in a map
+crime_counts_by_area_map <- crime_counts_by_area %>%
+  ggplot(aes(x = AREA, y = AREA.NAME, size = Crime_Count)) +
+  geom_point(aes(colour = Crime_Count), alpha = 0.7) +
+  scale_size_continuous(range = c(1, 10)) +
+  labs(title = "Number of Crimes in Each Area", x = "Area", y = "Area Name") +
+  theme_minimal()
+
+crime_counts_by_area_map
+```
+
+```{r}
+#Plot the number of crimes in each area in a world map
+library(tmap)
+library(sf)
+
+la <-
+  read_sf("City_Boundary.geojson")
+ggplot(la) +
+  geom_sf()
+
+#find the number of points using npts
+npts(la)
+```
+
