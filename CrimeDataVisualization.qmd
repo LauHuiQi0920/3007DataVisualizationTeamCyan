@@ -143,7 +143,6 @@ crime_counts_by_area_map <- crime_counts_by_area %>%
 crime_counts_by_area_map
 ```
 
-
 ```{r}
 #| label: data-preparation - centroids
 #| warning: false
@@ -168,7 +167,7 @@ la_count <- la %>%
 
 la_plot <- ggplot(la_count) +
   geom_sf(aes(fill = Crime_Count)) +
-  geom_point(data = la_centroids, aes(x = long_center, y = lat_center, size = Crime_Count), color = "black", alpha = 0.5) +
+  geom_point(aes(x = long_center, y = lat_center, size = Crime_Count), color = "black", alpha = 0.5) +
   scale_fill_viridis_c(name = "Crime Count", 
                        limits = c(25000, 65000),
                        breaks = c(30000, 40000, 50000, 60000),  # Custom breaks
@@ -188,6 +187,3 @@ la_plot <- ggplot(la_count) +
 
 la_plot
 ```
-
-
-
