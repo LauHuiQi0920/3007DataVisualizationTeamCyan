@@ -2,6 +2,9 @@
 title: "main"
 format: html
 editor: visual
+knitr:
+  opts_chunk:
+    fig.align: center
 ---
 
 ## 3007 Team Cyan Group Project
@@ -162,7 +165,7 @@ la_count <- la %>%
   left_join(la_centroids, by = c("APREC" = "APREC"))
 ```
 
-```{r}
+```{r fig.height=15, fig.width=15}
 #| label: data-visualisation using geom_sf
 
 la_plot <- ggplot(la_count) +
@@ -175,14 +178,17 @@ la_plot <- ggplot(la_count) +
   labs(title = "Number of Crimes in Each Area") +
   theme_minimal() +
   theme(
-    axis.title.x = element_blank(),  # Remove x-axis title
-    axis.title.y = element_blank(),  # Remove y-axis title
-    axis.text.x = element_blank(),   # Remove x-axis text
-    axis.text.y = element_blank(),   # Remove y-axis text
-    axis.ticks.x = element_blank(),  # Remove x-axis ticks
-    axis.ticks.y = element_blank(),  # Remove y-axis ticks
-    panel.grid.major = element_blank(),  # Remove major grid lines
-    panel.grid.minor = element_blank()   # Remove minor grid lines
+    plot.title = element_text(size = 25, face = "bold"),
+    axis.title.x = element_blank(),  
+    axis.title.y = element_blank(),  
+    axis.text.x = element_blank(),   
+    axis.text.y = element_blank(),   
+    axis.ticks.x = element_blank(),  
+    axis.ticks.y = element_blank(),  
+    panel.grid.major = element_blank(),  
+    panel.grid.minor = element_blank(),
+    legend.title = element_text(size = 15),  
+    legend.text = element_text(size = 15)
   )
 
 la_plot
