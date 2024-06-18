@@ -20,7 +20,7 @@ Joel Yong\
 ## Main code
 
 ```{r}
-#! output: false
+#| output: false
 # Load necessary libraries
 library(dplyr)
 library(ggplot2)
@@ -268,16 +268,8 @@ la_plot
 ```{r fig.height=15, fig.width=15}
 #| label: data-visualisation - number of top 5 crimes and total crimes by area using geom_sf
 
-# Define a function to combine emojis
-combine_emojis <- function(emoji1, emoji2) {
-  paste(emoji1, emoji2, sep = " ")
-}
-
-# Define combined shape values
-car_unlocked <- combine_emojis("\U0001F697", "\U0001F513")
-
 # Define a set of shapes to use
-shape_values <- c("\U1F52A", "\U1F44A", "\U1F3E0", car_unlocked, "\U1F494", "\U1F6CD", "\U1F3AD", "\U1F4B8", "\U1F58C", "\U1F693")
+shape_values <- c("\U1F52A", "\U1F44A", "\U1F3E0", "\U1F513", "\U1F494", "\U1F6CD", "\U1F3AD", "\U1F4B8", "\U1F58C", "\U1F693")
 
 # Plot the number of top 5 crimes and total crimes in each area map using geom_sf
 top_crime_codes_by_area_map_sf <- ggplot() +
@@ -295,7 +287,7 @@ top_crime_codes_by_area_map_sf <- ggplot() +
                        direction = -1) +
   scale_colour_viridis_c(name = "Crime Count per Crime Type",
                          option = "turbo",
-                         begin = 0.6,
+                         begin = 0.7,
                          end = 1) +
   labs(title = "Number of Top 5 Crimes and Total Crimes in Each Area of Los Angeles (LA)") +
   theme_minimal() +
