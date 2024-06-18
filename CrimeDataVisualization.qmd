@@ -210,6 +210,19 @@ top_crimes_la_count <- top_crimes_la_count %>%
   ungroup()
 ```
 
+```{r}
+#| label: data-preparation - jitter coords for top 5 crimes (alternative)
+top_crimes_la_count <- top_crimes_la_count %>%
+  group_by(AREA) %>%
+  mutate(
+    rank = rank(Crm.Cd.Desc),
+    jittered_long = long_center - 5000,
+    jittered_lat = lat_center - 10000 + rank * 3750
+  ) %>%
+  ungroup()
+```
+
+
 ```{r fig.height=15, fig.width=15}
 #| label: data-visualisation - number of top 5 crimes by area map
 
@@ -236,36 +249,6 @@ top_crime_codes_by_area_map
 ```
 
 ```{r fig.height=15, fig.width=15}
-#| label: data-visualisation - total crimes by area map using geom_sf
-
-la_plot <- ggplot(la_count) +
-  geom_sf(aes(fill = Crime_Count)) +
-  geom_point(aes(x = long_center, y = lat_center, size = Crime_Count), color = "black", alpha = 0.5) +
-  scale_size_continuous(range = c(2, 12)) +
-  scale_fill_viridis_c(name = "Crime Count", 
-                       limits = c(25000, 65000),
-                       breaks = c(30000, 40000, 50000, 60000),  # Custom breaks
-                       labels = c("30k", "40k", "50k", "60k")) +
-  labs(title = "Number of Crimes in Each Area") +
-  theme_minimal() +
-  theme(
-    plot.title = element_text(size = 25, face = "bold"),
-    axis.title.x = element_blank(),  
-    axis.title.y = element_blank(),  
-    axis.text.x = element_blank(),   
-    axis.text.y = element_blank(),   
-    axis.ticks.x = element_blank(),  
-    axis.ticks.y = element_blank(),  
-    panel.grid.major = element_blank(),  
-    panel.grid.minor = element_blank(),
-    legend.title = element_text(size = 15),  
-    legend.text = element_text(size = 15)
-  )
-
-la_plot
-```
-
-```{r fig.height=15, fig.width=15}
 #| label: data-visualisation - number of top 5 crimes and total crimes by area using geom_sf
 
 # Define a set of shapes to use
@@ -274,17 +257,20 @@ shape_values <- c("\U1F52A", "\U1F44A", "\U1F3E0", "\U1F513", "\U1F494", "\U1F6C
 # Plot the number of top 5 crimes and total crimes in each area map using geom_sf
 top_crime_codes_by_area_map_sf <- ggplot() +
   geom_sf(data = la_count, aes(fill = Crime_Count)) +
+  geom_point(data = la_count, aes(x = long_center - 500, y = lat_center - 500), color = "black", size = 3) +
   geom_point(data = top_crimes_la_count, 
-             aes(x = jittered_long, y = jittered_lat, shape = factor(Crm.Cd.Desc), colour = Crime_Count, size = Crime_Count),
-             alpha = 1) +
+             aes(x = jittered_long , y = jittered_lat, shape = factor(Crm.Cd.Desc), size = 2)) +
+  geom_segment(data = top_crimes_la_count, aes(x = long_center, y = lat_center, xend = jittered_long, yend = jittered_lat),
+               color = "black") +
   scale_shape_manual(name = "Crime Type", values = shape_values) +
   scale_size_continuous(name = "Crime Count per Crime Type",
                         range = c(5, 5)) +
-  scale_fill_viridis_c(name = "Total Crime Count",
-                       limits = c(25000, 65000),
-                       breaks = c(30000, 40000, 50000, 60000),  # Custom breaks
-                       labels = c("30k", "40k", "50k", "60k"),
-                       direction = -1) +
+  scale_fill_gradient(low = "#fee8c8",
+                      high = "#e34a33",
+                      name = "Total Crime Count",
+                      limits = c(25000, 65000),
+                      breaks = c(30000, 40000, 50000, 60000),
+                      labels = c("30k", "40k", "50k", "60k")) +
   scale_colour_viridis_c(name = "Crime Count per Crime Type",
                          option = "turbo",
                          begin = 0.7,
