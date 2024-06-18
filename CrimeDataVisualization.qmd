@@ -6,17 +6,13 @@ editor: visual
 
 ## 3007 Team Cyan Group Project
 
-Kahbelan
-
-Yee Kit
-
-Douglas
-
-Joel
-
-Hui Qi
-
-Kai Boon
+Group 3 (CYAN) Members:\
+Kahbelan Kalisalvam Kelaver\
+Poh Kai Boon\
+Goh Yee Kit\
+Lau Hui Qi\
+See Kai Cong\
+Joel Yong\
 
 ## Main code
 
@@ -27,6 +23,7 @@ library(dplyr)
 library(readxl)
 library(lubridate)
 library(DT)
+library(sf)
 ```
 
 ```{r}
@@ -44,7 +41,7 @@ head(crime_data)
 
 ```{r}
 #| label: data-cleaning - keep selected column
-#| outpu: false
+#| output: false
 
 crime_data <- crime_data |>
   select(Date.Rptd, DATE.OCC, TIME.OCC, AREA, AREA.NAME, Rpt.Dist.No, Crm.Cd, Crm.Cd.Desc, Crm.Cd.1, Crm.Cd.2, Crm.Cd.3, Crm.Cd.4, LOCATION, Cross.Street, LAT, LON)
@@ -109,12 +106,12 @@ datatable(head(cleaned_crime_data))
 
 #Counts of crime in each area
 crime_counts_by_area <- cleaned_crime_data %>%
+  mutate(AREA.NAME = toupper(AREA.NAME)) %>%
   group_by(AREA, AREA.NAME) %>%
   summarise(Crime_Count = n(), .groups = 'drop')
-
+crime_counts_by_area[8, "AREA.NAME"] <- "WEST LOS ANGELES"
+crime_counts_by_area[15, "AREA.NAME"] <- "NORTH HOLLYWOOD"
 crime_counts_by_area
-
-
 ```
 
 ```{r}
@@ -146,17 +143,51 @@ crime_counts_by_area_map <- crime_counts_by_area %>%
 crime_counts_by_area_map
 ```
 
+
 ```{r}
-#Plot the number of crimes in each area in a world map
-library(tmap)
-library(sf)
+#| label: data-preparation - centroids
+#| warning: false
 
-la <-
-  read_sf("City_Boundary.geojson")
-ggplot(la) +
-  geom_sf()
+la <- st_read("City_Boundary.geojson")
 
-#find the number of points using npts
-npts(la)
+la_centroids <- la %>%
+  st_centroid() %>%
+  rename(centroids = geometry) %>%
+  st_coordinates() %>%
+  as.data.frame() %>%
+  setNames(c("long_center", "lat_center")) %>%
+  mutate(APREC = la$APREC)
+
+la_count <- la %>%
+  left_join(crime_counts_by_area, by = c("APREC" = "AREA.NAME", "PREC" = "AREA")) %>%
+  left_join(la_centroids, by = c("APREC" = "APREC"))
 ```
+
+```{r}
+#| label: data-visualisation using geom_sf
+
+la_plot <- ggplot(la_count) +
+  geom_sf(aes(fill = Crime_Count)) +
+  geom_point(data = la_centroids, aes(x = long_center, y = lat_center, size = Crime_Count), color = "black", alpha = 0.5) +
+  scale_fill_viridis_c(name = "Crime Count", 
+                       limits = c(25000, 65000),
+                       breaks = c(30000, 40000, 50000, 60000),  # Custom breaks
+                       labels = c("30k", "40k", "50k", "60k")) +
+  labs(title = "Number of Crimes in Each Area") +
+  theme_minimal() +
+  theme(
+    axis.title.x = element_blank(),  # Remove x-axis title
+    axis.title.y = element_blank(),  # Remove y-axis title
+    axis.text.x = element_blank(),   # Remove x-axis text
+    axis.text.y = element_blank(),   # Remove y-axis text
+    axis.ticks.x = element_blank(),  # Remove x-axis ticks
+    axis.ticks.y = element_blank(),  # Remove y-axis ticks
+    panel.grid.major = element_blank(),  # Remove major grid lines
+    panel.grid.minor = element_blank()   # Remove minor grid lines
+  )
+
+la_plot
+```
+
+
 
