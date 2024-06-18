@@ -1,3 +1,5 @@
 *.csv
 CrimeDataVisualization_files
 *.html
+.Rproj.user
+.Rhistory

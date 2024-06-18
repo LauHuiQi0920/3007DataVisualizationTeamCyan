@@ -20,9 +20,11 @@ Joel Yong\
 ## Main code
 
 ```{r}
+#! output: false
 # Load necessary libraries
 library(dplyr)
 library(ggplot2)
+library(tidyverse)
 library(readxl)
 library(lubridate)
 library(DT)
@@ -152,31 +154,6 @@ crime_counts_by_area_map <- crime_counts_by_area %>%
 crime_counts_by_area_map
 ```
 
-```{r fig.height=15, fig.width=15}
-#| label: data-visualisation - number of top 5 crimes by area map
-
-# Plot the top 5 crime codes in each area map with jitter points
-top_crime_codes_by_area_map <- top_crime_codes_by_area %>%
-  ggplot(aes(x = AREA, y = AREA.NAME, size = Crime_Count, colour = factor(Crm.Cd.Desc))) +
-  geom_point(alpha = 0.5, position = position_jitter(width = 0.9, height = 0.8)) +
-  scale_size_continuous(range = c(2, 12)) +
-  scale_colour_viridis_d(option = "inferno", begin = 0.2, end = 0.8, direction = -1) +
-  labs(title = "Number of Top 5 Crimes in Each Area", x = "Area", y = "Area Name", color = "Crime Type") +
-  theme_minimal() +
-  theme(
-    plot.title = element_text(size = 25, face = "bold"),
-    axis.title.x = element_text(size = 12),
-    axis.title.y = element_text(size = 12),
-    axis.text.x = element_text(size = 10),
-    axis.text.y = element_text(size = 10),
-    legend.title = element_text(size = 10),
-    legend.text = element_text(size = 10)
-  )
-
-# Display the plot
-top_crime_codes_by_area_map
-```
-
 ```{r}
 #| label: data-preparation - centroids
 #| warning: false
@@ -205,15 +182,57 @@ top_crimes_la_count <- top_crime_codes_by_area %>%
 ```{r}
 #| label: data-preparation - jitter coords for top 5 crimes
 
-# Add jittered coordinates to top_crimes_la_count
-set.seed(3007)  # For reproducibility
+# Define the number of points and radius for the circular spread
+n_points <- 5  # Number of top crimes
+radius <- 4000  # Radius for the spread
+
+# Function to generate circular points around a centroid
+generate_circular_points <- function(lon, lat, n_points, radius) {
+  angles <- seq(0, 2 * pi, length.out = n_points + 1)[-1]
+  tibble(
+    jittered_long = lon + radius * cos(angles),
+    jittered_lat = lat + radius * sin(angles)
+  )
+}
+
+# Generate circular points for each row in the dataset
 top_crimes_la_count <- top_crimes_la_count %>%
+  group_by(AREA) %>%
+  mutate(id = row_number()) %>%
+  ungroup() %>%
+  rowwise() %>%
   mutate(
-    jittered_long = long_center + rnorm(n(), mean = 0, sd = 3000),
-    jittered_lat = lat_center + rnorm(n(), mean = 0, sd = 3000)
+    circular_coords = list(generate_circular_points(long_center, lat_center, n_points, radius)),
+    jittered_long = circular_coords$jittered_long[id],
+    jittered_lat = circular_coords$jittered_lat[id]
+  ) %>%
+  select(-circular_coords, -id) %>%
+  ungroup()
+```
+
+```{r fig.height=15, fig.width=15}
+#| label: data-visualisation - number of top 5 crimes by area map
+
+# Plot the top 5 crime codes in each area map with jittered points
+top_crime_codes_by_area_map <- top_crime_codes_by_area %>%
+  ggplot(aes(x = AREA, y = AREA.NAME, size = Crime_Count, colour = factor(Crm.Cd.Desc))) +
+  geom_point(alpha = 0.5, position = position_jitter(width = 0.9, height = 0.8)) +
+  scale_size_continuous(name = "Crime Count", range = c(2, 12)) +
+  scale_colour_viridis_d(name = "Crime Type", option = "inferno", begin = 0.2, end = 0.8, direction = -1) +
+  labs(title = "Number of Top 5 Crimes in Each Area", x = "Area", y = "Area Name") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 25, face = "bold"),
+    axis.title.x = element_text(size = 12),
+    axis.title.y = element_text(size = 12),
+    axis.text.x = element_text(size = 10),
+    axis.text.y = element_text(size = 10),
+    legend.title = element_text(size = 10),
+    legend.text = element_text(size = 10)
   )
 
-top_crimes_la_count
+# Display the plot
+top_crime_codes_by_area_map
 ```
 
 ```{r fig.height=15, fig.width=15}
@@ -249,20 +268,24 @@ la_plot
 ```{r fig.height=15, fig.width=15}
 #| label: data-visualisation - number of top 5 crimes and total crimes by area using geom_sf
 
+# Define a set of shapes to use
+shape_values <- c("A", "B", "C", "D", "E", "F", "G", "H", "I", "J")
+
 # Plot the number of top 5 crimes and total crimes in each area map using geom_sf
 top_crime_codes_by_area_map_sf <- ggplot() +
   geom_sf(data = la_count, aes(fill = Crime_Count)) +
   geom_point(data = top_crimes_la_count, 
-             aes(x = jittered_long, y = jittered_lat, size = Crime_Count, colour = factor(Crm.Cd.Desc)),
-             alpha = 0.6) +
+             aes(x = jittered_long, y = jittered_lat, shape = factor(Crm.Cd.Desc), colour = Crime_Count, size = Crime_Count),
+             alpha = 1) +
+  scale_shape_manual(name = "Crime Type", values = shape_values) +
   scale_size_continuous(name = "Top 5 Crime Count",
-                        range = c(4, 12)) +
+                        range = c(5, 5)) +
   scale_fill_viridis_c(name = "Total Crime Count",
                        limits = c(25000, 65000),
                        breaks = c(30000, 40000, 50000, 60000),  # Custom breaks
                        labels = c("30k", "40k", "50k", "60k"),
                        direction = -1) +
-  scale_colour_viridis_d(name = "Crime Type",
+  scale_colour_viridis_c(name = "Top 5 Crime Count",
                          option = "inferno",
                          begin = 0.2,
                          end = 0.8,
@@ -280,9 +303,10 @@ top_crime_codes_by_area_map_sf <- ggplot() +
     panel.grid.major = element_blank(),  
     panel.grid.minor = element_blank(),
     legend.title = element_text(size = 15),  
-    legend.text = element_text(size = 15),
+    legend.text = element_text(size = 15)
   ) +
-  guides(colour = guide_legend(override.aes = list(size = 6)))  # Adjust the size of the points in the legend
+  guides(shape = guide_legend(override.aes = list(size = 6)),  # Adjust the size of the shapes in the legend
+         colour = guide_legend(override.aes = list(size = 6)))  # Adjust the size of the points in the legend
 
 # Display the plot
 top_crime_codes_by_area_map_sf
