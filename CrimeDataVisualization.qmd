@@ -218,7 +218,7 @@ top_crime_codes_by_area_map <- top_crime_codes_by_area %>%
   ggplot(aes(x = AREA, y = AREA.NAME, size = Crime_Count, colour = factor(Crm.Cd.Desc))) +
   geom_point(alpha = 0.5, position = position_jitter(width = 0.9, height = 0.8)) +
   scale_size_continuous(name = "Crime Count", range = c(2, 12)) +
-  scale_colour_viridis_d(name = "Crime Type", option = "inferno", begin = 0.2, end = 0.8, direction = -1) +
+  scale_colour_viridis_d(name = "Crime Type", option = "turbo", begin = 0.6, end = 1) +
   labs(title = "Number of Top 5 Crimes in Each Area", x = "Area", y = "Area Name") +
   theme_minimal() +
   theme(
@@ -268,8 +268,16 @@ la_plot
 ```{r fig.height=15, fig.width=15}
 #| label: data-visualisation - number of top 5 crimes and total crimes by area using geom_sf
 
+# Define a function to combine emojis
+combine_emojis <- function(emoji1, emoji2) {
+  paste(emoji1, emoji2, sep = " ")
+}
+
+# Define combined shape values
+car_unlocked <- combine_emojis("\U0001F697", "\U0001F513")
+
 # Define a set of shapes to use
-shape_values <- c("A", "B", "C", "D", "E", "F", "G", "H", "I", "J")
+shape_values <- c("\U1F52A", "\U1F44A", "\U1F3E0", car_unlocked, "\U1F494", "\U1F6CD", "\U1F3AD", "\U1F4B8", "\U1F58C", "\U1F693")
 
 # Plot the number of top 5 crimes and total crimes in each area map using geom_sf
 top_crime_codes_by_area_map_sf <- ggplot() +
@@ -278,18 +286,17 @@ top_crime_codes_by_area_map_sf <- ggplot() +
              aes(x = jittered_long, y = jittered_lat, shape = factor(Crm.Cd.Desc), colour = Crime_Count, size = Crime_Count),
              alpha = 1) +
   scale_shape_manual(name = "Crime Type", values = shape_values) +
-  scale_size_continuous(name = "Top 5 Crime Count",
+  scale_size_continuous(name = "Crime Count per Crime Type",
                         range = c(5, 5)) +
   scale_fill_viridis_c(name = "Total Crime Count",
                        limits = c(25000, 65000),
                        breaks = c(30000, 40000, 50000, 60000),  # Custom breaks
                        labels = c("30k", "40k", "50k", "60k"),
                        direction = -1) +
-  scale_colour_viridis_c(name = "Top 5 Crime Count",
-                         option = "inferno",
-                         begin = 0.2,
-                         end = 0.8,
-                         direction = -1) +
+  scale_colour_viridis_c(name = "Crime Count per Crime Type",
+                         option = "turbo",
+                         begin = 0.6,
+                         end = 1) +
   labs(title = "Number of Top 5 Crimes and Total Crimes in Each Area of Los Angeles (LA)") +
   theme_minimal() +
   theme(
