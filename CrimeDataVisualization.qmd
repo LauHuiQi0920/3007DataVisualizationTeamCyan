@@ -215,9 +215,9 @@ top_crimes_la_count <- top_crimes_la_count %>%
 top_crimes_la_count <- top_crimes_la_count %>%
   group_by(AREA) %>%
   mutate(
-    rank = rank(Crm.Cd.Desc),
+    rank = rank(Crime_Count),
     jittered_long = long_center - 5000,
-    jittered_lat = lat_center - 10000 + rank * 3750
+    jittered_lat = lat_center - 10000 + rank * 3000
   ) %>%
   ungroup()
 ```
@@ -257,25 +257,25 @@ shape_values <- c("\U1F52A", "\U1F44A", "\U1F3E0", "\U1F513", "\U1F494", "\U1F6C
 # Plot the number of top 5 crimes and total crimes in each area map using geom_sf
 top_crime_codes_by_area_map_sf <- ggplot() +
   geom_sf(data = la_count, aes(fill = Crime_Count)) +
-  geom_point(data = la_count, aes(x = long_center - 500, y = lat_center - 500), color = "black", size = 3) +
+  geom_point(data = la_count, aes(x = long_center - 500, y = lat_center - 500), color = "black", size = 3, show.legend = FALSE) +
   geom_point(data = top_crimes_la_count, 
-             aes(x = jittered_long , y = jittered_lat, shape = factor(Crm.Cd.Desc), size = 2)) +
+             aes(x = jittered_long , y = jittered_lat, shape = factor(Crm.Cd.Desc)), size = 3.5) +
   geom_segment(data = top_crimes_la_count, aes(x = long_center, y = lat_center, xend = jittered_long, yend = jittered_lat),
                color = "black") +
   scale_shape_manual(name = "Crime Type", values = shape_values) +
-  scale_size_continuous(name = "Crime Count per Crime Type",
-                        range = c(5, 5)) +
+#  scale_size_continuous(name = "Crime Count per Crime Type",
+#                        range = c(5, 5)) +
   scale_fill_gradient(low = "#fee8c8",
                       high = "#e34a33",
                       name = "Total Crime Count",
                       limits = c(25000, 65000),
                       breaks = c(30000, 40000, 50000, 60000),
                       labels = c("30k", "40k", "50k", "60k")) +
-  scale_colour_viridis_c(name = "Crime Count per Crime Type",
-                         option = "turbo",
-                         begin = 0.7,
-                         end = 1) +
-  labs(title = "Number of Top 5 Crimes and Total Crimes in Each Area of Los Angeles (LA)") +
+#  scale_colour_viridis_c(name = "Crime Count per Crime Type",
+#                         option = "turbo",
+#                         begin = 0.7,
+#                         end = 1) +
+#  labs(title = "Number of Top 5 Crimes and Total Crimes in Each Area of Los Angeles (LA)") +
   theme_minimal() +
   theme(
     plot.title = element_text(size = 25, face = "bold"),
