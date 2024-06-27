@@ -1,0 +1,90 @@
+---
+title: "Poster"
+format:
+  poster-typst: 
+    size: "33x23" # Approximately A1
+    poster-authors: "Team Cyan"
+    departments: "Information and Communication Technologies"
+    institution-logo: "./imgs/sit-logo.png"
+    footer-text: "Information Visualization 2024"
+    footer-emails: "michael.gastner@singaporetech.edu.sg"
+execute:
+  echo: false
+knitr:
+  opts_chunk:
+    dev: svglite
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(knitr)
+purl("CrimeDataVisualization.qmd")
+source("poster_prep.R")
+```
+
+# Introduction
+Crime in america is a significant concern , the safety and well-being of residents, business and touristism will be impacted severely. There is a sharp rise in motor vehicle thefts is up 25% from 2019 to 2022[^usa_car_theft_2022] showing that there is still plenty of improvement required to curb the crime rate.
+
+Understanding and identifying area with high type of crime are can help the effort of effective law enforcement training and perpetration. Data constantly shows that neighborhoods such as South Los Angeles are still prevalent with violent crime[^california_2023]. Using statistical past data , using quantifiable information to identify hotspots allows law enforcement agencies allowing efficient dividing of resource better while maximizing safety.
+
+[^usa_car_theft_2022]: <https://www.marketwatch.com/guides/insurance-services/car-theft-statistics/>
+[^california_2023]: <https://www.latimes.com/california/story/2023-10-12/violent-crime-is-down-fear-is-up-why-is-la-perceived-as-dangerous>
+
+Taking a look at a crime distribution around the University of Southern California’s University Park campus on medium [^debold_battling_2015] (@fig-wsj-on-poster). This visualization is display see through blue dots to represent a hit in crime on a specific area, while straight to the point however there are several aspects of the plot can be refine.
+
+[^debold_battling_2015]: <https://towardsdatascience.com/visualizing-crime-in-los-angeles-14db37572909/>
+[^lee_reproducing_2017]: <https://www.mikelee.co/posts/2017-06-28-wsj-measles-vaccination-chart>
+# Previous Visualization
+
+```{r}
+#| label: fig-wsj-on-poster
+#| fig-cap: "Crime distribution around USC, published by the Medium."
+#| out-width: 100%
+
+include_graphics("imgs/bad_graph.jpeg")
+```
+
+
+# Strengths
+
+*   Alpha was used on the circles allowing darker spots to appear if overlapped.
+*   Gentle color blue was used, allowing user to easily view spots affected by a crime. The color picked do not have conflicting color with background of the map which was a nice touch.
+*   An area with good distribution was picked, as there is clusters displayed on the map.
+
+# Suggested Improvements
+
+1.  *State layer view* separated with area code, performs better visualization of the crime distribution. A localize view does not represent a crime spread well for meaningful actions.
+1.  *Identify type of crime clearly.* A clearer view of top crime should be labeled and display.
+
+1.  *Add missing title and guides.* Title should be used for clear description
+1.  *Add missing guides.* Guides should be used to show clear distinction of color shade to total crime count.
+1.  *Use a saturation color palette.* Shows a meaningful progression
+    through color space. Saturation palettes shows cold to hot zone allowing human to see intensity of an area.
+1.  *Label well known locations.* Labeling popular city center allow enforcer to see crime distribution vs density area. *Want ??*
+
+# Implementation
+
+
+## Data
+
+*   Los Angelas year 1st January 2020 to 7th June 2024.[^crime_data_2020] The data used is the universal data while @fig-wsj-on-poster use a subset of the data ending at 2021.The data set are broken apart to 10 years data set 2010 to 2019 [^crime_data_2010] however different format might be implement hence not used.
+
+
+[^crime_data_2020]: <https://data.lacity.org/Public-Safety/Crime-Data-from-2020-to-Present/2nrs-mtv8/data_preview>
+[^crime_data_2010]: <https://catalog.data.gov/dataset/crime-data-from-2010-to-2019>
+
+
+## Software
+
+We used the Quarto publication framework and the R programming language, along with the following third-party packages:
+
+*   *dplyr* 
+*   *ggplot2* 
+*   *tidyverse* for data transformation, including *ggplot2* for visualization
+    based on the grammar of graphics
+*   *readxl* for data import
+*   *lubridate* 
+*   *DT* 
+*   *knitr* for dynamic document generation

@@ -1,25 +1,4 @@
----
-title: "main"
-format: html
-editor: visual
-knitr:
-  opts_chunk:
-    fig.align: center
----
-
-## 3007 Team Cyan Group Project
-
-Group 3 (CYAN) Members:\
-Kahbelan Kalisalvam Kelaver\
-Poh Kai Boon\
-Goh Yee Kit\
-Lau Hui Qi\
-See Kai Cong\
-Joel Yong\
-
-## Main code
-
-```{r}
+## -----------------------------------------------------------------------------
 #| output: false
 # Load necessary libraries
 library(dplyr)
@@ -29,9 +8,9 @@ library(readxl)
 library(lubridate)
 library(DT)
 library(sf)
-```
 
-```{r}
+
+## -----------------------------------------------------------------------------
 #| label: data import
 #| output: false
 # Set the path to the CSV file
@@ -42,9 +21,9 @@ crime_data <- read.csv(file_path)
 
 # View the first few rows of the data
 head(crime_data)
-```
 
-```{r}
+
+## -----------------------------------------------------------------------------
 #| label: data-cleaning - keep selected column
 #| output: false
 
@@ -53,9 +32,9 @@ crime_data <- crime_data |>
 
 # View the first few rows of the modified data
 head(crime_data)
-```
 
-```{r}
+
+## -----------------------------------------------------------------------------
 #| label: data cleaning - remove rows if null for certain column, remove multiple spaces if any
 
 # Remove rows with NA values in the specified columns
@@ -83,9 +62,9 @@ cleaned_crime_data <- cleaned_crime_data %>%
 
 # View the first few rows of the cleaned data
 head(cleaned_crime_data)
-```
 
-```{r}
+
+## -----------------------------------------------------------------------------
 #| label: data-formating
 
 # Convert DATE.OCC to Date format
@@ -103,9 +82,9 @@ cleaned_crime_data <- cleaned_crime_data %>%
 
 # View the first few rows of the cleaned data with new columns
 datatable(head(cleaned_crime_data))
-```
 
-```{r}
+
+## -----------------------------------------------------------------------------
 #| label: data-preparation
 #| message: false
 
@@ -119,9 +98,9 @@ crime_counts_by_area[8, "AREA.NAME"] <- "WEST LOS ANGELES"
 crime_counts_by_area[15, "AREA.NAME"] <- "NORTH HOLLYWOOD"
 
 crime_counts_by_area
-```
 
-```{r}
+
+## -----------------------------------------------------------------------------
 #Based of crime code, find top 5 crime codes and the corresponding crime description based on each area
 top_crime_codes_by_area <- cleaned_crime_data %>%
   mutate(AREA.NAME = toupper(AREA.NAME)) %>%
@@ -137,9 +116,9 @@ top_crime_codes_by_area <- cleaned_crime_data %>%
   slice_head(n = 5)
 
 top_crime_codes_by_area
-```
 
-```{r}
+
+## -----------------------------------------------------------------------------
 #| label: data-visualisation - total crimes by area
 #| message: false
 
@@ -152,9 +131,9 @@ crime_counts_by_area_map <- crime_counts_by_area %>%
   theme_minimal()
 
 crime_counts_by_area_map
-```
 
-```{r}
+
+## -----------------------------------------------------------------------------
 #| label: data-preparation - centroids
 #| warning: false
 
@@ -177,9 +156,9 @@ la_count <- la %>%
 top_crimes_la_count <- top_crime_codes_by_area %>%
   left_join(la, by = c("AREA.NAME" = "APREC", "AREA" = "PREC")) %>%
   left_join(la_centroids, by = c("AREA.NAME" = "APREC"))
-```
 
-```{r}
+
+## -----------------------------------------------------------------------------
 #| label: data-preparation - jitter coords for top 5 crimes
 
 # Define the number of points and radius for the circular spread
@@ -208,9 +187,9 @@ top_crimes_la_count <- top_crimes_la_count %>%
   ) %>%
   select(-circular_coords, -id) %>%
   ungroup()
-```
 
-```{r}
+
+## -----------------------------------------------------------------------------
 #| label: data-preparation - jitter coords for top 5 crimes (alternative)
 top_crimes_la_count <- top_crimes_la_count %>%
   group_by(AREA) %>%
@@ -220,9 +199,9 @@ top_crimes_la_count <- top_crimes_la_count %>%
     jittered_lat = lat_center - 10000 + rank * 3000
   ) %>%
   ungroup()
-```
 
-```{r fig.height=15, fig.width=15}
+
+## ----fig.height=15, fig.width=15----------------------------------------------
 #| label: data-visualisation - number of top 5 crimes by area map
 
 # Plot the top 5 crime codes in each area map with jittered points
@@ -245,9 +224,9 @@ top_crime_codes_by_area_map <- top_crime_codes_by_area %>%
 
 # Display the plot
 top_crime_codes_by_area_map
-```
 
-```{r fig.height=15, fig.width=15}
+
+## ----fig.height=15, fig.width=15----------------------------------------------
 #| label: data-visualisation - number of top 5 crimes and total crimes by area using geom_sf
 
 # Define a set of shapes to use
@@ -294,4 +273,4 @@ top_crime_codes_by_area_map_sf <- ggplot() +
 
 # Display the plot
 top_crime_codes_by_area_map_sf
-```
+
