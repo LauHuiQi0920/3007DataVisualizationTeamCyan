@@ -1,5 +1,5 @@
 ---
-title: "Poster"
+title: "Mapping Crime in the Los Angeles: A Visual Journey (2020-2024)"
 format:
   poster-typst: 
     size: "33x23" # Approximately A1
@@ -7,7 +7,7 @@ format:
     departments: "Information and Communication Technologies"
     institution-logo: "./imgs/sit-logo.png"
     footer-text: "Information Visualization 2024"
-    footer-emails: "michael.gastner@singaporetech.edu.sg"
+    footer-emails: "singaporetech.edu.sg"
 execute:
   echo: false
 knitr:
@@ -22,6 +22,7 @@ knitr:
 library(knitr)
 purl("CrimeDataVisualization.qmd")
 source("poster_prep.R")
+source("CrimeDataVisualization.R")
 ```
 
 # Introduction
@@ -64,8 +65,77 @@ include_graphics("imgs/bad_graph.jpeg")
     through color space. Saturation palettes shows cold to hot zone allowing human to see intensity of an area.
 1.  *Label well known locations.* Labeling popular city center allow enforcer to see crime distribution vs density area. *Want ??*
 
-# Implementation
+# Improved Visualization
 
+```{r}
+#| label: improved-visualization
+#| fig-cap: "Top 5 crimes and total crimes by area."
+#| fig-width: 6.0
+#| fig-height: 10.0
+#| out-width: 100%
+
+# Define a set of shapes to use
+shape_values <- c("\U1F52A", "\U1F44A", "\U1F3E0", "\U1F513", "\U1F494", "\U1F6CD", "\U1F3AD", "\U1F4B8", "\U1F58C", "\U1F693")
+
+# Plot the number of top 5 crimes and total crimes in each area map using geom_sf
+top_crime_codes_by_area_map_sf <- ggplot() +
+  geom_sf(data = la_count, aes(fill = Crime_Count)) +
+  geom_point(data = la_count, aes(x = long_center - 500, y = lat_center - 500), color = "black", size = 3, show.legend = FALSE) +
+  geom_point(data = top_crimes_la_count, 
+             aes(x = jittered_long , y = jittered_lat, shape = factor(Crm.Cd.Desc)), size = 3.5) +
+  geom_segment(data = top_crimes_la_count, aes(x = long_center, y = lat_center, xend = jittered_long, yend = jittered_lat),
+               color = "black") +
+  scale_shape_manual(name = "Crime Type", values = shape_values) +
+#  scale_size_continuous(name = "Crime Count per Crime Type",
+#                        range = c(5, 5)) +
+  scale_fill_gradient(low = "#fee8c8",
+                      high = "#e34a33",
+                      name = "Total Crime Count",
+                      limits = c(25000, 65000),
+                      breaks = c(30000, 40000, 50000, 60000),
+                      labels = c("30k", "40k", "50k", "60k")) +
+#  scale_colour_viridis_c(name = "Crime Count per Crime Type",
+#                         option = "turbo",
+#                         begin = 0.7,
+#                         end = 1) +
+#  labs(title = "Number of Top 5 Crimes and Total Crimes in Each Area of Los Angeles (LA)") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 25, face = "bold"),
+    axis.title.x = element_blank(),  
+    axis.title.y = element_blank(),  
+    axis.text.x = element_blank(),   
+    axis.text.y = element_blank(),   
+    axis.ticks.x = element_blank(),  
+    axis.ticks.y = element_blank(),  
+    panel.grid.major = element_blank(),  
+    panel.grid.minor = element_blank(),
+    legend.title = element_text(size = 15),  
+    legend.text = element_text(size = 15),
+    legend.position = "bottom"
+  ) +
+  guides(shape = guide_legend(override.aes = list(size = 6),ncol = 1))+  # Adjust the size of the shapes in the legend
+  guides(colour = guide_legend(override.aes = list(size = 6) , direction = "vertical"))  # Adjust the size of the points in the legend
+
+# Display the plot
+#top_crime_codes_by_area_map_sf
+
+ggsave("imgs/plot.png", plot = top_crime_codes_by_area_map_sf, width = 15, height = 15, units = "in")
+
+```
+
+```{r}
+#| label: fixed-poster
+#| fig-cap: "Top 5 crimes and total crimes by area."
+#| out-width: 100%
+
+include_graphics("imgs/plot.png")
+```
+
+```{=typst}
+#v(2em)
+```
+# Implementation
 
 ## Data
 
@@ -74,7 +144,6 @@ include_graphics("imgs/bad_graph.jpeg")
 
 [^crime_data_2020]: <https://data.lacity.org/Public-Safety/Crime-Data-from-2020-to-Present/2nrs-mtv8/data_preview>
 [^crime_data_2010]: <https://catalog.data.gov/dataset/crime-data-from-2010-to-2019>
-
 
 ## Software
 
@@ -88,3 +157,12 @@ We used the Quarto publication framework and the R programming language, along w
 *   *lubridate* 
 *   *DT* 
 *   *knitr* for dynamic document generation
+
+# Further Suggestions for Interactivity
+
+To update not changed yet, Because our visualization was intended for a poster, we did not implement any interactive features, including the infotip. However, if the data are visualized in an HTML document, interactive features can be achieved using the R packages such as *plotly*. In that case, we recommend that the tile does not change its fill color. In contrast, the original visualization changes the fill color of the activated tile to light blue (see @fig-infotip_color_change), which can be misinterpreted as a change in incidence. Instead, we suggest highlighting the activated tile by thickening its border.
+
+
+# Conclusion
+
+To update not changed yet, We successfully implemented all suggested improvements for the non-interactive visualization. By labeling every state and choosing a colorblind-friendly palette, the revised plot is more accessible. The logarithmic color scale makes the decrease in incidence after the introduction of the vaccine less striking but enables readers to detect patterns in the low-incidence range more easily.
