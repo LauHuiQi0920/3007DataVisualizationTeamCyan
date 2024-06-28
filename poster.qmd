@@ -1,5 +1,5 @@
 ---
-title: "Mapping Crime in the Los Angeles: A Visual Journey (2020-2024)"
+title: "**Mapping Crime in the Los Angeles: A Visual Journey (2020-2024)**"
 format:
   poster-typst: 
     size: "33x23" # Approximately A1
@@ -37,6 +37,7 @@ Taking a look at a crime distribution around the University of Southern Californ
 
 [^debold_battling_2015]: <https://towardsdatascience.com/visualizing-crime-in-los-angeles-14db37572909/>
 [^lee_reproducing_2017]: <https://www.mikelee.co/posts/2017-06-28-wsj-measles-vaccination-chart>
+
 # Previous Visualization
 
 ```{r}
@@ -145,7 +146,7 @@ top_crime_codes_by_area_map_sf <- ggplot() +
 # Display the plot
 #top_crime_codes_by_area_map_sf
 
-ggsave("imgs/plot.png", plot = top_crime_codes_by_area_map_sf, width = 20, height = 20, units = "in")
+ggsave("imgs/plot.png", plot = top_crime_codes_by_area_map_sf, width = 25, height = 21, units = "in")
 
 ```
 
@@ -157,9 +158,6 @@ ggsave("imgs/plot.png", plot = top_crime_codes_by_area_map_sf, width = 20, heigh
 include_graphics("imgs/plot.png")
 ```
 
-```{=typst}
-#v(2em)
-```
 # Implementation
 
 ## Data
