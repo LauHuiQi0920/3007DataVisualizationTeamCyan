@@ -113,7 +113,7 @@ top_crime_codes_by_area <- cleaned_crime_data %>%
   summarise(Crime_Count = n(), .groups = 'drop') %>%
   arrange(desc(Crime_Count)) %>%
   group_by(AREA, AREA.NAME) %>%
-  slice_head(n = 5)
+  slice_head(n = 3)
 
 top_crime_codes_by_area
 
@@ -162,7 +162,7 @@ top_crimes_la_count <- top_crime_codes_by_area %>%
 #| label: data-preparation - jitter coords for top 5 crimes
 
 # Define the number of points and radius for the circular spread
-n_points <- 5  # Number of top crimes
+n_points <- 3  # Number of top crimes
 radius <- 4000  # Radius for the spread
 
 # Function to generate circular points around a centroid
@@ -273,4 +273,120 @@ top_crime_codes_by_area_map_sf <- ggplot() +
 
 # Display the plot
 top_crime_codes_by_area_map_sf
+
+
+## -----------------------------------------------------------------------------
+# Define a named vector with the abbreviations
+abbreviations <- c(
+  "MISSION" = "MIS",
+  "DEVONSHIRE" = "DEV",
+  "FOOTHILL" = "FTH",
+  "TOPANGA" = "TOP",
+  "WEST VALLEY" = "WVA",
+  "NORTH HOLLYWOOD" = "NHO",
+  "VAN NUYS" = "VNY",
+  "NORTHEAST" = "NRT",
+  "HOLLYWOOD" = "HOL",
+  "WEST LOS ANGELES" = "WLA",
+  "HOLLENBECK" = "HOL",
+  "RAMPART" = "RAM",
+  "WILSHIRE" = "WIL",
+  "OLYMPIC" = "OLY",
+  "SOUTHWEST" = "SW",
+  "NEWTON" = "NEW",
+  "PACIFIC" = "PAC",
+  "77TH STREET" = "77S",
+  "SOUTHEAST" = "SEA",
+  "HARBOR" = "HAR",
+  "CENTRAL" = "CEN"
+)
+
+# Add a new column with abbreviations
+la_count <- la_count %>%
+  mutate(AREA_ABBREV = abbreviations[APREC])
+
+# Check the modified la_count table
+print(la_count)
+
+
+## ----fig.height=25, fig.width=20----------------------------------------------
+# Load the required packages
+library(pals)
+library(RColorBrewer)
+library(ggrepel)
+
+# Define a set of colors to use for each crime type from the pals package
+color_values <- glasbey(n = 10)
+glasbey_colors <- glasbey()
+
+# Define the indices of colors to replace and their new values
+replace_indices <- c(2, 3,4, 8, 6, 5, 9)  # Indices of the colors you want to replace
+new_colors <- c("#00FF00", "#911eb4","#ff00f2", "#dcbeff", "#aaffc3","#131342","#42d4f4")  # New colors to replace the existing ones
+
+# Replace specific colors
+custom_colors <- glasbey_colors
+custom_colors[replace_indices] <- new_colors
+
+# Ensure the palette has exactly 10 colors by selecting the first 10 colors after replacement
+custom_colors <- custom_colors[1:10]
+
+# Plot the number of top 5 crimes and total crimes in each area map using geom_sf
+top_crime_codes_by_area_map_sf <- ggplot() +
+  geom_sf(data = la_count, aes(fill = Crime_Count)) +
+  geom_segment(data = top_crimes_la_count, 
+               aes(x = long_center, y = lat_center, xend = jittered_long, yend = jittered_lat, color = factor(Crm.Cd.Desc))) + 
+  geom_point(data = la_count, aes(x = long_center - 500, y = lat_center - 500), color = "black", size = 3, show.legend = FALSE) +
+  geom_point(data = top_crimes_la_count, 
+             aes(x = jittered_long, y = jittered_lat, color = factor(Crm.Cd.Desc)), 
+             size = 6) +  # Use shape 21 to allow both fill and color
+  geom_point(data = top_crimes_la_count, 
+             aes(x = jittered_long, y = jittered_lat), 
+             color = "black", size = 5 + 1, shape = 21, stroke = 1, show.legend = FALSE) +  geom_text_repel(data = la_count, 
+                  aes(x = long_center, y = lat_center, label = AREA_ABBREV), 
+                  color = ifelse(la_count$Crime_Count > 45000, "white", "black"), 
+                  size = 5, show.legend = FALSE, fontface = "bold",
+                  nudge_y = 0.5, 
+                  nudge_x = 0.5) +  # Add geom_text_repel for area labels
+  scale_color_manual(name = "Crime Type", values = custom_colors) +  # Use color_manual for points and segments
+  scale_fill_distiller(palette = "OrRd", 
+                       name = "Total Crime Count",
+                       limits = c(25000, 65000),
+                       breaks = c(30000, 40000, 50000, 60000),
+                       labels = c("30k", "40k", "50k", "60k"),
+                       direction = 1) +
+  theme_minimal() +
+  labs(title = "Top 3 Crimes and Total Crimes by Area in Los Angeles", caption = "Source: LAPD Divisions") +
+  theme(
+    plot.title = element_text(size = 25, face = "bold", hjust = 0.5, margin = margin(b = -40)), 
+    axis.title.x = element_blank(),  
+    axis.title.y = element_blank(),  
+    axis.text.x = element_blank(),   
+    axis.text.y = element_blank(),   
+    axis.ticks.x = element_blank(),  
+    axis.ticks.y = element_blank(),  
+    panel.grid.major = element_blank(),  
+    panel.grid.minor = element_blank(),
+    legend.title = element_text(size = 15),  
+    legend.text = element_text(size = 15),
+    legend.position = "bottom",
+    plot.caption = element_text(size = 12, hjust = 0.5),
+    legend.box.margin = margin(-80, 0, 0, 0),
+    plot.margin = margin(0, 0, 0, 0)  # Reduce space around the plot
+  ) +
+  guides(
+    fill = guide_colorbar(barwidth = 10, barheight = 2, title.position = "top", order = 2),  # Adjust the size of the color bar and place it first
+    colour = guide_legend(override.aes = list(size = 6), direction = "vertical", order = 3),  # Adjust the size of the points in the legend
+
+  )
+# Display the plot
+top_crime_codes_by_area_map_sf
+
+
+## -----------------------------------------------------------------------------
+# Get all the color codes from the glasbey palette
+glasbey_colors <- glasbey()
+
+# Print the color codes to identify which ones to exclude
+print(glasbey_colors)
+
 

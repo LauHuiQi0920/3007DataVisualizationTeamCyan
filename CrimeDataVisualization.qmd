@@ -134,7 +134,7 @@ top_crime_codes_by_area <- cleaned_crime_data %>%
   summarise(Crime_Count = n(), .groups = 'drop') %>%
   arrange(desc(Crime_Count)) %>%
   group_by(AREA, AREA.NAME) %>%
-  slice_head(n = 5)
+  slice_head(n = 3)
 
 top_crime_codes_by_area
 ```
@@ -183,7 +183,7 @@ top_crimes_la_count <- top_crime_codes_by_area %>%
 #| label: data-preparation - jitter coords for top 5 crimes
 
 # Define the number of points and radius for the circular spread
-n_points <- 5  # Number of top crimes
+n_points <- 3  # Number of top crimes
 radius <- 4000  # Radius for the spread
 
 # Function to generate circular points around a centroid
@@ -295,8 +295,7 @@ top_crime_codes_by_area_map_sf <- ggplot() +
 # Display the plot
 top_crime_codes_by_area_map_sf
 ```
-<<<<<<< Updated upstream
-=======
+
 ```{r}
 # Define a named vector with the abbreviations
 abbreviations <- c(
@@ -377,9 +376,9 @@ top_crime_codes_by_area_map_sf <- ggplot() +
                        labels = c("30k", "40k", "50k", "60k"),
                        direction = 1) +
   theme_minimal() +
-  labs(title = "Top 3 Crimes and Total Crimes by Area in Los Angeles") +
+  labs(title = "Top 3 Crimes and Total Crimes by Area in Los Angeles", caption = "Source: LAPD Divisions") +
   theme(
-    plot.title = element_text(size = 25, face = "bold", hjust = 0.5), 
+    plot.title = element_text(size = 25, face = "bold", hjust = 0.5, margin = margin(b = -40)), 
     axis.title.x = element_blank(),  
     axis.title.y = element_blank(),  
     axis.text.x = element_blank(),   
@@ -390,16 +389,20 @@ top_crime_codes_by_area_map_sf <- ggplot() +
     panel.grid.minor = element_blank(),
     legend.title = element_text(size = 15),  
     legend.text = element_text(size = 15),
-    legend.position = "bottom",  # Move legends to the bottom
+    legend.position = "bottom",
+    plot.caption = element_text(size = 12, hjust = 0.5),
+    legend.box.margin = margin(-80, 0, 0, 0),
+    plot.margin = margin(0, 0, 0, 0)  # Reduce space around the plot
   ) +
   guides(
-    color = guide_legend(override.aes = list(size = 6)),  # Adjust the size of the points in the legend
-    fill = guide_colorbar(barwidth = 10, barheight = 1)  # Adjust the size of the color bar legend
-  )  # Adjust the size of the points in the legend
+    fill = guide_colorbar(barwidth = 10, barheight = 2, title.position = "top", order = 2),  # Adjust the size of the color bar and place it first
+    colour = guide_legend(override.aes = list(size = 6), direction = "vertical", order = 3),  # Adjust the size of the points in the legend
 
+  )
 # Display the plot
 top_crime_codes_by_area_map_sf
 ```
+
 ```{r}
 # Get all the color codes from the glasbey palette
 glasbey_colors <- glasbey()
@@ -408,11 +411,3 @@ glasbey_colors <- glasbey()
 print(glasbey_colors)
 
 ```
-
-
-
-
-
-
-
->>>>>>> Stashed changes
