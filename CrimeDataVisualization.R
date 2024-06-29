@@ -2,7 +2,6 @@
 #| output: false
 # Load necessary libraries
 library(dplyr)
-library(ggplot2)
 library(tidyverse)
 library(readxl)
 library(lubridate)

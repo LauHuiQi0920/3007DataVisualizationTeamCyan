@@ -172,19 +172,26 @@ include_graphics("imgs/plot.png")
 
 We used the Quarto publication framework and the R programming language, along with the following third-party packages:
 
-*   *dplyr* 
-*   *ggplot2* 
-*   *tidyverse* for data transformation, including *ggplot2* for visualization
-    based on the grammar of graphics
+*   *dplyr* for data manipulation
+*   *tidyverse* for data transformation, including *ggplot2* for visualization based on the grammar of graphics
 *   *readxl* for data import
-*   *lubridate* 
-*   *DT* 
+*   *lubridate* for date and time manipulation
+*   *DT* for interactive data tables
 *   *knitr* for dynamic document generation
 
 # Further Suggestions for Interactivity
 
-To update not changed yet, Because our visualization was intended for a poster, we did not implement any interactive features, including the infotip. However, if the data are visualized in an HTML document, interactive features can be achieved using the R packages such as *plotly*. In that case, we recommend that the tile does not change its fill color. In contrast, the original visualization changes the fill color of the activated tile to light blue (see @fig-infotip_color_change), which can be misinterpreted as a change in incidence. Instead, we suggest highlighting the activated tile by thickening its border.
+While our visualization was designed for a poster interactive features was not implemented. However, if the data are visualized in an HTML document, interactive features can be achieved using an array of R packages.
 
+* *ggplot2* 
+  * Allow hover, drag, zoom and export
+  * Ggplot2 allows an easier view for people with sight disabilities or difficulties, increasing size of town name text by zooming is great for increasing accessibility across all audience. 
+* *shiny* 
+  * Allow Sorting of graph to clearly differentiate categories. 
+  * Dynamic input for example the distribution of only robbery crime though out the state.
+* *plotly* 
+  * Customized tool tip with ggplot2
+  * Plotly can easily be used to expand long named town , show exact number while not crowding the poster. As the border of each town is separated by a thin gray line , darkening the borders while adding shadow will show lighted areas when hovered. 
 
 # Conclusion
 
