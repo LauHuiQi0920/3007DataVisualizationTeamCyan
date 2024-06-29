@@ -1,0 +1,43 @@
+.footnotes {
+    font-size: 9px;
+    margin: 0;
+    height: 40px;
+    /* Adjust the font size as needed */
+}
+
+.footnotes p {
+    margin: 0
+}
+
+body {
+    height: 95%;
+}
+
+.sidebar {
+    float: right;
+}
+
+body p {
+    font-size: 9px;
+}
+
+#text {
+    font-size: 9px;
+}
+
+li {
+    font-size: 9px;
+}
+
+.section.level2.dashboard-row.dashboard-row-flex {
+    flex: 50 50 0px;
+}
+
+.chart-shim {
+    font-size: 9px;
+}
+
+h4 {
+    font-size: 10px;
+    margin: 0;
+}
