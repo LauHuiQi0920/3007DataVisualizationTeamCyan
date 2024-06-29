@@ -8,6 +8,7 @@ format:
     institution-logo: "./imgs/sit-logo.png"
     footer-text: "Information Visualization 2024"
     footer-emails: "singaporetech.edu.sg"
+    css: ["poster.css"]
 execute:
   echo: false
 knitr:
@@ -20,23 +21,28 @@ knitr:
 #| include: false
 
 library(knitr)
+library(gridExtra)
+library(grid)
+library(png)
+
 purl("CrimeDataVisualization.qmd")
 source("poster_prep.R")
 source("CrimeDataVisualization.R")
 ```
 
 # Introduction
-Crime in america is a significant concern , the safety and well-being of residents, business and touristism will be impacted severely. There is a sharp rise in motor vehicle thefts is up 25% from 2019 to 2022[^usa_car_theft_2022] showing that there is still plenty of improvement required to curb the crime rate.
 
-Understanding and identifying area with high type of crime are can help the effort of effective law enforcement training and perpetration. Data constantly shows that neighborhoods such as South Los Angeles are still prevalent with violent crime[^california_2023]. Using statistical past data , using quantifiable information to identify hotspots allows law enforcement agencies allowing efficient dividing of resource better while maximizing safety.
+Crime in america is a significant concern , the safety and well-being of residents, business and touristism will be impacted severely. There is a sharp rise in motor vehicle thefts is up 25% from 2019 to 2022[^1] showing that there is still plenty of improvement required to curb the crime rate.
 
-[^usa_car_theft_2022]: <https://www.marketwatch.com/guides/insurance-services/car-theft-statistics/>
-[^california_2023]: <https://www.latimes.com/california/story/2023-10-12/violent-crime-is-down-fear-is-up-why-is-la-perceived-as-dangerous>
+[^1]: <https://www.marketwatch.com/guides/insurance-services/car-theft-statistics/>
 
-Taking a look at a crime distribution around the University of Southern California’s University Park campus on medium [^debold_battling_2015] (@fig-wsj-on-poster). This visualization is display see through blue dots to represent a hit in crime on a specific area, while straight to the point however there are several aspects of the plot can be refine.
+Understanding and identifying area with high type of crime are can help the effort of effective law enforcement training and perpetration. Data constantly shows that neighborhoods such as South Los Angeles are still prevalent with violent crime[^2]. Using statistical past data , using quantifiable information to identify hotspots allows law enforcement agencies allowing efficient dividing of resource better while maximizing safety.
 
-[^debold_battling_2015]: <https://towardsdatascience.com/visualizing-crime-in-los-angeles-14db37572909/>
-[^lee_reproducing_2017]: <https://www.mikelee.co/posts/2017-06-28-wsj-measles-vaccination-chart>
+[^2]: <https://www.latimes.com/california/story/2023-10-12/violent-crime-is-down-fear-is-up-why-is-la-perceived-as-dangerous>
+
+Taking a look at a crime distribution around the University of Southern California’s University Park campus on medium [^3] (@fig-wsj-on-poster). This visualization is display see through blue dots to represent a hit in crime on a specific area, while straight to the point however there are several aspects of the plot can be refine.
+
+[^3]: <https://towardsdatascience.com/visualizing-crime-in-los-angeles-14db37572909/>
 
 # Previous Visualization
 
@@ -48,31 +54,67 @@ Taking a look at a crime distribution around the University of Southern Californ
 include_graphics("imgs/bad_graph.jpeg")
 ```
 
-
 # Strengths
 
-*   Alpha was used on the circles allowing darker spots to appear if overlapped.
-*   Gentle color blue was used, allowing user to easily view spots affected by a crime. The color picked do not have conflicting color with background of the map which was a nice touch.
-*   An area with good distribution was picked, as there is clusters displayed on the map.
+1.  Alpha was used on the circles allowing darker spots to appear if overlapped.
+2.  Gentle color blue was used, allowing the user to easily view spots affected by a crime. The color picked does not have a conflicting color with the background of the map, which was a nice touch.
+3.  An area with good distribution was picked, as there are clusters displayed on the map.
+4.  As the mouse is hovered over the circles, the exact number of crimes is displayed through a tooltip (@fig-infotip), allowing the user to see the exact number of crimes in that area .
+
+```{r}
+#| label: fig-infotip
+#| fig-cap: "Crime distribution around USC, published by the Medium."
+#| out-width: 100%
+
+include_graphics("imgs/combined.png")
+```
 
 # Suggested Improvements
 
-1.  *State layer view* separated with area code, performs better visualization of the crime distribution. A localize view does not represent a crime spread well for meaningful actions.
-1.  *Identify type of crime clearly.* A clearer view of top crime should be labeled and display.
+1.  *State layer view:* separated with area code, performs better visualization of the crime distribution. A localize view does not represent a crime spread well for meaningful actions.
 
-1.  *Add missing title and guides.* Title should be used for clear description
-1.  *Add missing guides.* Guides should be used to show clear distinction of color shade to total crime count.
-1.  *Use a saturation color palette.* Shows a meaningful progression
-    through color space. Saturation palettes shows cold to hot zone allowing human to see intensity of an area.
-1.  *Label well known locations.* Labeling popular city center allow enforcer to see crime distribution vs density area. *Want ??*
+2.  *Identify type of crime clearly:* A clearer view of top crime should be labeled and display.
+
+3.  *Add missing title and guides:* Title should be used for clear description
+
+4.  *Add missing guides:* Guides should be used to show clear distinction of color shade to total crime count.
+
+5.  *Use a saturation color palette:* Shows a meaningful progression through color space. Saturation palettes shows cold to hot zone allowing human to see intensity of an area.
+
+6.  *Label locations:* Labeling popular city center allow enforcer to see crime distribution and easily identify the areas with high crime rate.
+
+7.  *Add crime types for each area:* Displaying the top 3 crimes in each area allows for better understanding of the crime distribution and provides additional information.
+
+# Implementation
+
+## Data
+
+-   Los Angelas year 1st January 2020 to 7th June 2024.[^4] The data used is the universal data while @fig-wsj-on-poster use a subset of the data ending at 2021.The data set are broken apart to 10 years data set 2010 to 2019 [^5] however different format might be implement hence not used.
+
+[^4]: <https://data.lacity.org/Public-Safety/Crime-Data-from-2020-to-Present/2nrs-mtv8/data_preview>
+
+[^5]: <https://catalog.data.gov/dataset/crime-data-from-2010-to-2019>
+
+## Software
+
+We used the Quarto publication framework and the R programming language, along with the following third-party packages:
+
+-   *dplyr* for data manipulation
+-   *tidyverse* for data transformation, including *ggplot2* for visualization based on the grammar of graphics
+-   *readxl* for data import
+-   *lubridate* for date and time manipulation
+-   *DT* for interactive data tables
+-   *knitr* for dynamic document generation
+-   *pals* for color palettes
+-   *RColorBrewer* for color palettes
 
 # Improved Visualization
 
 ```{r}
 #| label: improved-visualization
 #| fig-cap: "Top 5 crimes and total crimes by area."
-#| fig-width: 10.0
-#| fig-height: 10.0
+#| fig-width: 15.0
+#| fig-height: 15.0
 #| out-width: 100%
 
 # Load the required packages
@@ -122,7 +164,7 @@ top_crime_codes_by_area_map_sf <- ggplot() +
   theme_minimal() +
   labs(title = "Top 3 Crimes and Total Crimes by Area in Los Angeles", caption = "Source: LAPD Divisions") +
   theme(
-    plot.title = element_text(size = 20, hjust = 0.5, margin = margin(b = -20)), 
+    plot.title = element_text(size = 25, hjust = 0.5, margin = margin(b = -20)), 
     axis.title.x = element_blank(),  
     axis.title.y = element_blank(),  
     axis.text.x = element_blank(),   
@@ -131,22 +173,22 @@ top_crime_codes_by_area_map_sf <- ggplot() +
     axis.ticks.y = element_blank(),  
     panel.grid.major = element_blank(),  
     panel.grid.minor = element_blank(),
-    legend.title = element_text(size = 15),  
-    legend.text = element_text(size = 15),
+    legend.title = element_text(size = 20),  
+    legend.text = element_text(size = 20),
     legend.position = "bottom",
     plot.caption = element_text(size = 12, hjust = 0.5),
     legend.box.margin = margin(-60, 0, 0, 0),
     plot.margin = margin(0, 0, 0, 0)  # Reduce space around the plot
   ) +
   guides(
-    fill = guide_colorbar(barwidth = 10, barheight = 2, title.position = "top", order = 2),  # Adjust the size of the color bar and place it first
+    fill = guide_colorbar(barwidth = 13, barheight = 3, title.position = "top", order = 2),  # Adjust the size of the color bar and place it first
     colour = guide_legend(override.aes = list(size = 6), direction = "vertical", order = 3),  # Adjust the size of the points in the legend
 
   )
 # Display the plot
 #top_crime_codes_by_area_map_sf
 
-ggsave("imgs/plot.png", plot = top_crime_codes_by_area_map_sf, width = 25, height = 21, units = "in")
+ggsave("imgs/plot.png", plot = top_crime_codes_by_area_map_sf, width = 26, height = 21, units = "in")
 
 ```
 
@@ -158,40 +200,9 @@ ggsave("imgs/plot.png", plot = top_crime_codes_by_area_map_sf, width = 25, heigh
 include_graphics("imgs/plot.png")
 ```
 
-# Implementation
-
-## Data
-
-*   Los Angelas year 1st January 2020 to 7th June 2024.[^crime_data_2020] The data used is the universal data while @fig-wsj-on-poster use a subset of the data ending at 2021.The data set are broken apart to 10 years data set 2010 to 2019 [^crime_data_2010] however different format might be implement hence not used.
-
-
-[^crime_data_2020]: <https://data.lacity.org/Public-Safety/Crime-Data-from-2020-to-Present/2nrs-mtv8/data_preview>
-[^crime_data_2010]: <https://catalog.data.gov/dataset/crime-data-from-2010-to-2019>
-
-## Software
-
-We used the Quarto publication framework and the R programming language, along with the following third-party packages:
-
-*   *dplyr* for data manipulation
-*   *tidyverse* for data transformation, including *ggplot2* for visualization based on the grammar of graphics
-*   *readxl* for data import
-*   *lubridate* for date and time manipulation
-*   *DT* for interactive data tables
-*   *knitr* for dynamic document generation
-
 # Further Suggestions for Interactivity
 
-While our visualization was designed for a poster interactive features was not implemented. However, if the data are visualized in an HTML document, interactive features can be achieved using an array of R packages.
-
-* *ggplot2* 
-  * Allow hover, drag, zoom and export
-  * Ggplot2 allows an easier view for people with sight disabilities or difficulties, increasing size of town name text by zooming is great for increasing accessibility across all audience. 
-* *shiny* 
-  * Allow Sorting of graph to clearly differentiate categories. 
-  * Dynamic input for example the distribution of only robbery crime though out the state.
-* *plotly* 
-  * Customized tool tip with ggplot2
-  * Plotly can easily be used to expand long named town , show exact number while not crowding the poster. As the border of each town is separated by a thin gray line , darkening the borders while adding shadow will show lighted areas when hovered. 
+While our visualization was designed for a poster, interactive features were not implemented. However, in an HTML document, these features can be achieved using various R packages. **ggplot2** allows for **hover, drag, zoom, and export**, which improves accessibility for people with sight disabilities by enabling zoom to increase text size. **Shiny** facilitates the **sorting of graphs** to clearly differentiate categories and provides **dynamic input**, such as displaying the distribution of only robbery crimes throughout the state. Additionally, **plotly** offers **customized tooltips** with ggplot2, expands long town names, and shows exact numbers without crowding. By **darkening borders** and adding shadows, plotly highlights areas when hovered, enhancing the overall user experience.
 
 # Conclusion
 
