@@ -15,4 +15,4 @@ library(knitr)
 #| fig.cap: "Visualization of measles incidence in the United States from
 #|   1928 to 2013 by @debold_battling_2015."
 
-include_graphics("../imgs/bad_graph.jpeg")
+include_graphics("imgs/bad_graph.jpeg")

@@ -5,11 +5,10 @@ format:
     size: "33x23" # Approximately A1
     poster-authors: "Team Cyan"
     departments: "Information and Communication Technologies"
-    institution-logo: "./imgs/sit-logo.png"
+    institution-logo: "../imgs/sit-logo.png"
     footer-text: "Information Visualization 2024"
     footer-emails: "singaporetech.edu.sg"
-    css: ["poster.css"]
-    #keep-typ: true
+    template: _extensions/poster/typst-template.typ
     
 execute:
   echo: false
@@ -33,6 +32,7 @@ source("CrimeDataVisualization.R")
 ```
 
 # Introduction
+
 Crime in america is a significant concern , the safety and well-being of residents, business and touristism will be impacted severely. There is a sharp rise in motor vehicle thefts is up 25% from 2019 to 2022[^1] showing that there is still plenty of improvement required to curb the crime rate.
 
 [^1]: <https://www.marketwatch.com/guides/insurance-services/car-theft-statistics/>
