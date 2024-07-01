@@ -236,6 +236,7 @@
   set page(
     width: width,
     height: height,
+    fill: rgb(249, 249, 249),
     margin: 
       (top: 1in,bottom: 2in, left: 1.5in, right: 1.5in),
     footer: [
@@ -279,7 +280,7 @@
     if it.level == 1 [
       // First-level headings are centered smallcaps.
       #set align(left)
-      #set text({28pt})
+      #set text(28pt)
       #set text(weight: 700)
       #set text (fill: rgb(170, 55, 52))
       #show: smallcaps
@@ -293,7 +294,8 @@
     ] else if it.level == 2 [
       // Second-level headings are run-ins.
       #set text(style: "normal")
-      #set text(weight: 800)
+      #set text(20pt)
+      #set text(weight: 700)
       #v(32pt, weak: true)
       #if it.numbering != none {
         numbering("i.", deepest)
@@ -317,13 +319,13 @@
       rows: 2,
       columns: (title_column_size, univ_logo_column_size),
       column-gutter: 40pt,
-      row-gutter: 50pt,
+      row-gutter: 25pt,
        block(
-        fill: rgb(170, 55, 52), // Change this to the desired background color
-        inset: 10pt,
+        fill: rgb(170, 55, 52),
+        inset: 25pt,
         width: 100%,
-        text(fill: rgb(255, 255, 255), title_font_size, title + "\n\n") + // Change this to the desired text color
-        text(fill: rgb(255, 255, 255), authors_font_size, emph(authors) + // Change this to the desired text color
+        text(fill: rgb(255, 255, 255), title_font_size, title + "\n\n") + 
+        text(fill: rgb(255, 255, 255), authors_font_size, strong(text(fill: rgb(171, 255, 255), authors)) + 
             "   (" + departments + ") ")
       ),
       image(univ_logo, width: univ_logo_scale),
@@ -426,21 +428,30 @@
 )
 
 #block(
-  fill: rgb(247, 245, 245), // Set the background color
+  fill: rgb(243, 241, 241),
   inset: 30pt,
   width: 100%
 )[
   = Introduction
 <introduction>
-Crime in america is a significant concern , the safety and well-being of residents, business and touristism will be impacted severely. There is a sharp rise in motor vehicle thefts is up 25% from 2019 to 2022#footnote[#link("https://www.marketwatch.com/guides/insurance-services/car-theft-statistics/");] showing that there is still plenty of improvement required to curb the crime rate.
+Crime in America is a significant concern, impacting the safety and well-being of residents, businesses, and tourism. There has been a sharp rise in motor vehicle thefts, which increased by 25% from 2019 to 2022#footnote[#link("https://www.marketwatch.com/guides/insurance-services/car-theft-statistics/");] ,demonstrating the need for continued efforts to curb the crime rate.
 #v(1em)
-Understanding and identifying area with high type of crime are can help the effort of effective law enforcement training and perpetration. Data constantly shows that neighborhoods such as South Los Angeles are still prevalent with violent crime#footnote[#link("https://www.latimes.com/california/story/2023-10-12/violent-crime-is-down-fear-is-up-why-is-la-perceived-as-dangerous");];. Using statistical past data , using quantifiable information to identify hotspots allows law enforcement agencies allowing efficient dividing of resource better while maximizing safety.
+Understanding and identifying areas with high crime rates can significantly enhance law enforcement training and preparation. Data consistently shows that neighborhoods such as South Los Angeles remain prevalent with violent crime#footnote[#link("https://www.latimes.com/california/story/2023-10-12/violent-crime-is-down-fear-is-up-why-is-la-perceived-as-dangerous");];. Utilizing past statistical data and quantifiable information to identify hotspots allows law enforcement agencies to allocate resources more efficiently and maximize safety.
 #v(1em)
-Taking a look at a crime distribution around the University of Southern California’s University Park campus on medium #footnote[#link("https://towardsdatascience.com/visualizing-crime-in-los-angeles-14db37572909/");] \(@fig-wsj-on-poster). This visualization is display see through blue dots to represent a hit in crime on a specific area, while straight to the point however there are several aspects of the plot can be refine.
+Examining crime distribution in Los Angeles, a Medium visualization focuses on the University of Southern California’s University Park campus, using blue dots to represent crime incidents #footnote[#link("https://towardsdatascience.com/visualizing-crime-in-los-angeles-14db37572909/");] (@fig-wsj-on-poster). While straightforward, the plot could be refined for better clarity and impact.
 ]
 
-
+#block(
+  fill: white, // Set the background color
+  inset: 30pt,
+  width: 100%
+)[
 = Previous Visualization
+#line(
+  start: (0%, 0%),
+  end: (100%, 0%),
+  stroke: 3pt + rgb(170, 55, 52) 
+)
 <previous-visualization>
 #block[
 #block[
@@ -457,11 +468,11 @@ numbering: "1",
 )
 <fig-wsj-on-poster>
 
+]
+]
+]
 
-]
-]
 #block(
-  fill: rgb(247, 245, 245), // Set the background color
   inset: 30pt,
   width: 100%
 )[
@@ -469,7 +480,7 @@ numbering: "1",
 <strengths>
 + Alpha was used on the circles allowing darker spots to appear if overlapped.
 
-+ Gentle color blue was used, allowing the user to easily view spots affected by a crime. The color picked does not have a conflicting color with the background of the map, which was a nice touch.
++ A gentle blue color was used, making it easy for users to identify crime-affected spots. The chosen color effectively contrasts with the map's background, enhancing visibility without clashing.
 
 + An area with good distribution was picked, as there are clusters displayed on the map.
 
@@ -490,55 +501,67 @@ numbering: "1",
 )
 <fig-infotip>
 ]
-
 ]
 ]
-
-
-= Suggested Improvements
-<suggested-improvements>
-+ #emph[State layer view:] separated with area code, performs better visualization of the crime distribution. A localize view does not represent a crime spread well for meaningful actions.
-
-+ #emph[Identify type of crime clearly:] A clearer view of top crime should be labeled and display.
-
-+ #emph[Add missing title and guides:] Title should be used for clear description
-
-+ #emph[Add missing guides:] Guides should be used to show clear distinction of color shade to total crime count.
-
-+ #emph[Use a saturation color palette:] Shows a meaningful progression through color space. Saturation palettes shows cold to hot zone allowing human to see intensity of an area.
-
-+ #emph[Label locations:] Labeling popular city center allow enforcer to see crime distribution and easily identify the areas with high crime rate.
-
-+ #emph[Add crime types for each area:] Displaying the top 3 crimes in each area allows for better understanding of the crime distribution and provides additional information.
 
 #block(
-  fill: rgb(247, 245, 245), // Set the background color
   inset: 30pt,
-  radius: 4pt,
+  width: 100%
+)[
+= Suggested Improvements
+<suggested-improvements>
++ #strong[State layer view:] separated with area code, performs better visualization of the crime distribution. A localize view does not represent a crime spread well for meaningful actions.
+
++ #strong[Identify type of crime clearly:] A clearer view of top crime should be labeled and display.
+
++ #strong[Add missing title and guides:] Title should be used for clear description
+
++ #strong[Add missing guides:] Guides should be used to show clear distinction of color shade to total crime count.
+
++ #strong[Use a saturation color palette:] Shows a meaningful progression through color space. Saturation palettes shows cold to hot zone allowing human to see intensity of an area.
+
++ #strong[Label locations:] Labeling popular city center allow enforcer to see crime distribution and easily identify the areas with high crime rate.
+
++ #strong[Add crime types for each area:] Displaying the top 3 crimes in each area allows for better understanding of the crime distribution and provides additional information.
+]
+
+#block(
+  fill: rgb(243, 241, 241), // Set the background color
+  inset: 30pt,
   width: 100%
 )[
 = Implementation
 <implementation>
 == Data
 <data>
-- Los Angelas year 1st January 2020 to 7th June 2024.#footnote[#link("https://data.lacity.org/Public-Safety/Crime-Data-from-2020-to-Present/2nrs-mtv8/data_preview");] The data used is the universal data while @fig-wsj-on-poster use a subset of the data ending at 2021.The data set are broken apart to 10 years data set 2010 to 2019 #footnote[#link("https://catalog.data.gov/dataset/crime-data-from-2010-to-2019");] however different format might be implement hence not used.
+- The data used spans from January 1, 2020, to June 7, 2024, and is sourced from the universal crime data for Los Angeles#footnote[#link("https://data.lacity.org/Public-Safety/Crime-Data-from-2020-to-Present/2nrs-mtv8/data_preview");]. Unlike the subset of data ending in 2021 used in the previous visualization (@fig-wsj-on-poster), this dataset offers a more comprehensive view. Although there are datasets available for the years 2010 to 2019#footnote[#link("https://catalog.data.gov/dataset/crime-data-from-2010-to-2019");], they were not used due to differing formats.
+
 
 == Software
 <software>
 We used the Quarto publication framework and the R programming language, along with the following third-party packages:
 
-- #emph[dplyr] for data manipulation
-- #emph[tidyverse] for data transformation, including #emph[ggplot2] for visualization based on the grammar of graphics
-- #emph[readxl] for data import
-- #emph[lubridate] for date and time manipulation
-- #emph[DT] for interactive data tables
-- #emph[knitr] for dynamic document generation
-- #emph[pals] for color palettes
-- #emph[RColorBrewer] for color palettes
+- #strong[#text(rgb(170, 55, 52))[dplyr]] for data manipulation
+- #strong[#text(rgb(170, 55, 52))[tidyverse]] for data transformation, including #strong[#text(rgb(170, 55, 52))[ggplot2]] for visualization based on the grammar of graphics
+- #strong[#text(rgb(170, 55, 52))[readxl]] for data import
+- #strong[#text(rgb(170, 55, 52))[lubridate]] for date and time manipulation
+- #strong[#text(rgb(170, 55, 52))[DT]] for interactive data tables
+- #strong[#text(rgb(170, 55, 52))[knitr]] for dynamic document generation
+- #strong[#text(rgb(170, 55, 52))[pals]] for qualitative color palettes
+- #strong[#text(rgb(170, 55, 52))[RColorBrewer]] for sequential color palettes
 ]
-#v(5em)
 
+#block(
+  fill: white, // Set the background color
+  inset: 30pt,
+  width: 100%
+)[
 = Improved Visualization
+#line(
+  start: (0%, 0%),
+  end: (100%, 0%),
+  stroke: 3pt + rgb(170, 55, 52) 
+)
 <improved-visualization>
 #block[
 #block[
@@ -553,20 +576,25 @@ kind: "quarto-float-fig",
 supplement: "Figure", 
 )
 
-
+]
 ]
 ]
 
 #block(
-  fill: rgb(250, 237, 235), // Set the background color
   inset: 30pt,
   width: 100%
 )[
 = Further Suggestions for Interactivity
 <further-suggestions-for-interactivity>
-While our visualization was designed for a poster, interactive features were not implemented. However, in an HTML document, these features can be achieved using various R packages. #strong[ggplot2] allows for #strong[hover, drag, zoom, and export];, which improves accessibility for people with sight disabilities by enabling zoom to increase text size. #strong[Shiny] facilitates the #strong[sorting of graphs] to clearly differentiate categories and provides #strong[dynamic input];, such as displaying the distribution of only robbery crimes throughout the state. Additionally, #strong[plotly] offers #strong[customized tooltips] with ggplot2, expands long town names, and shows exact numbers without crowding. By #strong[darkening borders] and adding shadows, plotly highlights areas when hovered, enhancing the overall user experience.
+While our visualization was designed for a poster, interactive features were not implemented. However, in an HTML document, these features can be achieved using various R packages. #strong[#text(rgb(170, 55, 52))[ggplot2]] allows for #strong[hover, drag, zoom, and export];, which improves accessibility for people with sight disabilities by enabling zoom to increase text size. #strong[#text(rgb(170, 55, 52))[Shiny]] facilitates the #strong[sorting of graphs] to clearly differentiate categories and provides #strong[dynamic input];, such as displaying the distribution of only robbery crimes throughout the state. Additionally, #strong[#text(rgb(170, 55, 52))[plotly]] offers #strong[customized tooltips] with ggplot2, expands long town names, and shows exact numbers without crowding. By #strong[darkening borders] and adding shadows, plotly highlights areas when hovered, enhancing the overall user experience.
 ]
 
+#block(
+  fill: rgb(250,236,236), // Set the background color
+  inset: 30pt,
+  width: 100%
+)[
 = Conclusion
 <conclusion>
-To update not changed yet, We successfully implemented all suggested improvements for the non-interactive visualization. By labeling every state and choosing a colorblind-friendly palette, the revised plot is more accessible. The logarithmic color scale makes the decrease in incidence after the introduction of the vaccine less striking but enables readers to detect patterns in the low-incidence range more easily.
+The revised crime visualization for Los Angeles (2020-2024) improves on previous versions by adding area labels, a saturation color palette, and comprehensive guides. Highlighting the top three crime types per area provides deeper insights into local patterns. These enhancements make the visualization more complex yet user-friendly, aiding law enforcement in resource allocation and strategy development, and ultimately contributing to improved community safety.
+]

@@ -33,15 +33,15 @@ source("CrimeDataVisualization.R")
 
 # Introduction
 
-Crime in america is a significant concern , the safety and well-being of residents, business and touristism will be impacted severely. There is a sharp rise in motor vehicle thefts is up 25% from 2019 to 2022[^1] showing that there is still plenty of improvement required to curb the crime rate.
+Crime in America is a significant concern, impacting the safety and well-being of residents, businesses, and tourism. There has been a sharp rise in motor vehicle thefts, which increased by 25% from 2019 to 2022 [^1], demonstrating the need for continued efforts to curb the crime rate.
 
 [^1]: <https://www.marketwatch.com/guides/insurance-services/car-theft-statistics/>
 
-Understanding and identifying area with high type of crime are can help the effort of effective law enforcement training and perpetration. Data constantly shows that neighborhoods such as South Los Angeles are still prevalent with violent crime[^2]. Using statistical past data , using quantifiable information to identify hotspots allows law enforcement agencies allowing efficient dividing of resource better while maximizing safety.
+Understanding and identifying areas with high crime rates can significantly enhance law enforcement training and preparation. Data consistently shows that neighborhoods such as South Los Angeles remain prevalent with violent crime [^2]. Utilizing past statistical data and quantifiable information to identify hotspots allows law enforcement agencies to allocate resources more efficiently and maximize safety.
 
 [^2]: <https://www.latimes.com/california/story/2023-10-12/violent-crime-is-down-fear-is-up-why-is-la-perceived-as-dangerous>
 
-Taking a look at a crime distribution around the University of Southern California’s University Park campus on medium [^3] (@fig-wsj-on-poster). This visualization is display see through blue dots to represent a hit in crime on a specific area, while straight to the point however there are several aspects of the plot can be refine.
+Examining the crime distribution around the city of Los Angeles, a visualization on Medium which focuses on a smaller area, particularly, the University of Southern California’s University Park campus, which uses blue dots to represent crime incidents in specific areas [^3]. While the visualization is straightforward, several aspects of the plot could be refined for better clarity and impact.
 
 [^3]: <https://towardsdatascience.com/visualizing-crime-in-los-angeles-14db37572909/>
 
@@ -58,7 +58,7 @@ include_graphics("imgs/bad_graph.jpeg")
 # Strengths
 
 1.  Alpha was used on the circles allowing darker spots to appear if overlapped.
-2.  Gentle color blue was used, allowing the user to easily view spots affected by a crime. The color picked does not have a conflicting color with the background of the map, which was a nice touch.
+2.  A gentle blue color was used, making it easy for users to identify crime-affected spots. The chosen color effectively contrasts with the map's background, enhancing visibility without clashing.
 3.  An area with good distribution was picked, as there are clusters displayed on the map.
 4.  As the mouse is hovered over the circles, the exact number of crimes is displayed through a tooltip (@fig-infotip), allowing the user to see the exact number of crimes in that area .
 
@@ -90,7 +90,7 @@ include_graphics("imgs/combined.png")
 
 ## Data
 
--   Los Angelas year 1st January 2020 to 7th June 2024.[^4] The data used is the universal data while @fig-wsj-on-poster use a subset of the data ending at 2021.The data set are broken apart to 10 years data set 2010 to 2019 [^5] however different format might be implement hence not used.
+-  The data used spans from January 1, 2020, to June 7, 2024, and is sourced from the universal crime data for Los Angeles[^4].  Unlike the subset of data ending in 2021 used in the previous visualization (@fig-wsj-on-poster), this dataset offers a more comprehensive view. Although there are datasets available for the years 2010 to 2019 [^5] ,they were not used due to differing formats.
 
 [^4]: <https://data.lacity.org/Public-Safety/Crime-Data-from-2020-to-Present/2nrs-mtv8/data_preview>
 
@@ -106,8 +106,8 @@ We used the Quarto publication framework and the R programming language, along w
 -   *lubridate* for date and time manipulation
 -   *DT* for interactive data tables
 -   *knitr* for dynamic document generation
--   *pals* for color palettes
--   *RColorBrewer* for color palettes
+-   *pals* for qualitative color palettes
+-   *RColorBrewer* for sequential color palettes
 
 # Improved Visualization
 
@@ -165,7 +165,7 @@ top_crime_codes_by_area_map_sf <- ggplot() +
   theme_minimal() +
   labs(title = "Top 3 Crimes and Total Crimes by Area in Los Angeles", caption = "Source: LAPD Divisions") +
   theme(
-    plot.title = element_text(size = 25, hjust = 0.5, margin = margin(b = -20)), 
+    plot.title = element_text(size = 40, hjust = 0.5, margin = margin(b = -20)), 
     axis.title.x = element_blank(),  
     axis.title.y = element_blank(),  
     axis.text.x = element_blank(),   
@@ -203,8 +203,8 @@ include_graphics("imgs/plot.png")
 
 # Further Suggestions for Interactivity
 
-While our visualization was designed for a poster, interactive features were not implemented. However, in an HTML document, these features can be achieved using various R packages. **ggplot2** allows for **hover, drag, zoom, and export**, which improves accessibility for people with sight disabilities by enabling zoom to increase text size. **Shiny** facilitates the **sorting of graphs** to clearly differentiate categories and provides **dynamic input**, such as displaying the distribution of only robbery crimes throughout the state. Additionally, **plotly** offers **customized tooltips** with ggplot2, expands long town names, and shows exact numbers without crowding. By **darkening borders** and adding shadows, plotly highlights areas when hovered, enhancing the overall user experience.
+While our visualization was designed for a poster, interactive features were not implemented. However, in an HTML document, these features can be achieved using various R packages. **ggplot2** allows for **hover, drag, zoom, and export**, which improves accessibility for people with sight disabilities by enabling zoom to increase text size. **Shiny** facilitates the **sorting of graphs** to clearly differentiate categories and provides **dynamic input**, such as displaying the distribution of only robbery crimes throughout the state. Additionally, **plotly** offers **customized tool-tips** with ggplot2, expands long town names, and shows exact numbers without crowding. By **darkening borders** and adding shadows, plotly highlights areas when hovered, enhancing the overall user experience.
 
 # Conclusion
 
-To update not changed yet, We successfully implemented all suggested improvements for the non-interactive visualization. By labeling every state and choosing a colorblind-friendly palette, the revised plot is more accessible. The logarithmic color scale makes the decrease in incidence after the introduction of the vaccine less striking but enables readers to detect patterns in the low-incidence range more easily.
+The revised crime visualization for Los Angeles (2020-2024) improves on previous versions by adding area labels, a saturation color palette, and comprehensive guides. Highlighting the top three crime types per area provides deeper insights into local patterns. These enhancements make the visualization more complex yet user-friendly, aiding law enforcement in resource allocation and strategy development, and ultimately contributing to improved community safety.
