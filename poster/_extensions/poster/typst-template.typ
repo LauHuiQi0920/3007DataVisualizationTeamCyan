@@ -194,13 +194,13 @@
   num_columns: "3",
 
   // University logo's scale (in %).
-  univ_logo_scale: "50",
+  univ_logo_scale: "45",
 
   // University logo's column size (in in).
   univ_logo_column_size: "10",
 
   // Title and authors' column size (in in).
-  title_column_size: "20",
+  title_column_size: "25",
 
   // Poster title's font size (in pt).
   title_font_size: "48",
@@ -218,7 +218,7 @@
   body
 ) = {
   // Set the body font.
-  set text(font: "STIX Two Text", size: 16pt)
+  set text(font: "Arial", size: 15pt)
   let sizes = size.split("x")
   let width = int(sizes.at(0)) * 1in
   let height = int(sizes.at(1)) * 1in
@@ -237,15 +237,14 @@
     width: width,
     height: height,
     margin: 
-      (top: 1in, left: 2in, right: 2in, bottom: 2in),
+      (top: 1in,bottom: 2in, left: 1.5in, right: 1.5in),
     footer: [
       #set align(center)
       #set text(32pt, white)
       #block(
-        fill: rgb(86, 66, 62),
+        fill: rgb(170, 55, 52),
         width: 100%,
         inset: 20pt,
-        radius: 10pt,
         [
           //#text(font: "Courier", size: footer_url_font_size, footer_url) 
           //#h(1fr) 
@@ -279,10 +278,10 @@
     set text(24pt, weight: 400)
     if it.level == 1 [
       // First-level headings are centered smallcaps.
-      #set align(center)
-      #set text({ 32pt})
+      #set align(left)
+      #set text({28pt})
       #set text(weight: 700)
-      #set text (fill: white)
+      #set text (fill: rgb(170, 55, 52))
       #show: smallcaps
       #v(50pt, weak: true)
       #if it.numbering != none {
@@ -295,7 +294,6 @@
       // Second-level headings are run-ins.
       #set text(style: "normal")
       #set text(weight: 800)
-      #set text(fill: rgb(58, 138, 0))
       #v(32pt, weak: true)
       #if it.numbering != none {
         numbering("i.", deepest)
@@ -314,15 +312,20 @@
   })
 
   // Arranging the logo, title, authors, and department in the header.
-  align(center,
+  align(left,
     grid(
       rows: 2,
       columns: (title_column_size, univ_logo_column_size),
-      column-gutter: 0pt,
+      column-gutter: 40pt,
       row-gutter: 50pt,
-      text(title_font_size, title + "\n\n") + 
-      text(authors_font_size, emph(authors) + 
-          "   (" + departments + ") "),
+       block(
+        fill: rgb(170, 55, 52), // Change this to the desired background color
+        inset: 10pt,
+        width: 100%,
+        text(fill: rgb(255, 255, 255), title_font_size, title + "\n\n") + // Change this to the desired text color
+        text(fill: rgb(255, 255, 255), authors_font_size, emph(authors) + // Change this to the desired text color
+            "   (" + departments + ") ")
+      ),
       image(univ_logo, width: univ_logo_scale),
     )
   )
@@ -355,6 +358,7 @@
 // documentation on creating typst templates here and some examples here:
 //   - https://typst.app/docs/tutorial/making-a-template/
 //   - https://github.com/typst/templates
+
 
 #show: doc => poster(
    title: [#strong[Mapping Crime in the Los Angeles: A Visual Journey (2020-2024)];], 
@@ -422,28 +426,21 @@
 )
 
 #block(
-  fill: rgb(228, 50, 44), // Set the background color
-  inset: 8pt,
-  radius: 4pt,
+  fill: rgb(247, 245, 245), // Set the background color
+  inset: 30pt,
   width: 100%
 )[
   = Introduction
-]
 <introduction>
 Crime in america is a significant concern , the safety and well-being of residents, business and touristism will be impacted severely. There is a sharp rise in motor vehicle thefts is up 25% from 2019 to 2022#footnote[#link("https://www.marketwatch.com/guides/insurance-services/car-theft-statistics/");] showing that there is still plenty of improvement required to curb the crime rate.
 #v(1em)
 Understanding and identifying area with high type of crime are can help the effort of effective law enforcement training and perpetration. Data constantly shows that neighborhoods such as South Los Angeles are still prevalent with violent crime#footnote[#link("https://www.latimes.com/california/story/2023-10-12/violent-crime-is-down-fear-is-up-why-is-la-perceived-as-dangerous");];. Using statistical past data , using quantifiable information to identify hotspots allows law enforcement agencies allowing efficient dividing of resource better while maximizing safety.
 #v(1em)
 Taking a look at a crime distribution around the University of Southern California’s University Park campus on medium #footnote[#link("https://towardsdatascience.com/visualizing-crime-in-los-angeles-14db37572909/");] \(@fig-wsj-on-poster). This visualization is display see through blue dots to represent a hit in crime on a specific area, while straight to the point however there are several aspects of the plot can be refine.
-
-#block(
-  fill: rgb(228, 50, 44), // Set the background color
-  inset: 8pt,
-  radius: 4pt,
-  width: 100%
-)[
-= Previous Visualization
 ]
+
+
+= Previous Visualization
 <previous-visualization>
 #block[
 #block[
@@ -464,13 +461,11 @@ numbering: "1",
 ]
 ]
 #block(
-  fill: rgb(228, 50, 44), // Set the background color
-  inset: 8pt,
-  radius: 4pt,
+  fill: rgb(247, 245, 245), // Set the background color
+  inset: 30pt,
   width: 100%
 )[
 = Strengths
-]
 <strengths>
 + Alpha was used on the circles allowing darker spots to appear if overlapped.
 
@@ -494,18 +489,13 @@ supplement: "Figure",
 numbering: "1", 
 )
 <fig-infotip>
-
+]
 
 ]
 ]
-#block(
-  fill: rgb(228, 50, 44), // Set the background color
-  inset: 8pt,
-  radius: 4pt,
-  width: 100%
-)[
+
+
 = Suggested Improvements
-]
 <suggested-improvements>
 + #emph[State layer view:] separated with area code, performs better visualization of the crime distribution. A localize view does not represent a crime spread well for meaningful actions.
 
@@ -522,13 +512,12 @@ numbering: "1",
 + #emph[Add crime types for each area:] Displaying the top 3 crimes in each area allows for better understanding of the crime distribution and provides additional information.
 
 #block(
-  fill: rgb(228, 50, 44), // Set the background color
-  inset: 8pt,
+  fill: rgb(247, 245, 245), // Set the background color
+  inset: 30pt,
   radius: 4pt,
   width: 100%
 )[
 = Implementation
-]
 <implementation>
 == Data
 <data>
@@ -546,15 +535,10 @@ We used the Quarto publication framework and the R programming language, along w
 - #emph[knitr] for dynamic document generation
 - #emph[pals] for color palettes
 - #emph[RColorBrewer] for color palettes
-#v(5em)
-#block(
-  fill: rgb(228, 50, 44), // Set the background color
-  inset: 8pt,
-  radius: 4pt,
-  width: 100%
-)[
-= Improved Visualization
 ]
+#v(5em)
+
+= Improved Visualization
 <improved-visualization>
 #block[
 #block[
@@ -572,24 +556,17 @@ supplement: "Figure",
 
 ]
 ]
+
 #block(
-  fill: rgb(228, 50, 44), // Set the background color
-  inset: 8pt,
-  radius: 4pt,
+  fill: rgb(250, 237, 235), // Set the background color
+  inset: 30pt,
   width: 100%
 )[
 = Further Suggestions for Interactivity
-]
 <further-suggestions-for-interactivity>
 While our visualization was designed for a poster, interactive features were not implemented. However, in an HTML document, these features can be achieved using various R packages. #strong[ggplot2] allows for #strong[hover, drag, zoom, and export];, which improves accessibility for people with sight disabilities by enabling zoom to increase text size. #strong[Shiny] facilitates the #strong[sorting of graphs] to clearly differentiate categories and provides #strong[dynamic input];, such as displaying the distribution of only robbery crimes throughout the state. Additionally, #strong[plotly] offers #strong[customized tooltips] with ggplot2, expands long town names, and shows exact numbers without crowding. By #strong[darkening borders] and adding shadows, plotly highlights areas when hovered, enhancing the overall user experience.
-
-#block(
-  fill: rgb(228, 50, 44), // Set the background color
-  inset: 8pt,
-  radius: 4pt,
-  width: 100%
-)[
-= Conclusion
 ]
+
+= Conclusion
 <conclusion>
 To update not changed yet, We successfully implemented all suggested improvements for the non-interactive visualization. By labeling every state and choosing a colorblind-friendly palette, the revised plot is more accessible. The logarithmic color scale makes the decrease in incidence after the introduction of the vaccine less striking but enables readers to detect patterns in the low-incidence range more easily.
