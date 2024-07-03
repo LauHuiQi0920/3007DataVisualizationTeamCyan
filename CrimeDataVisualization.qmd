@@ -28,11 +28,15 @@ library(readxl)
 library(lubridate)
 library(DT)
 library(sf)
+library(pals)
+library(RColorBrewer)
+library(ggrepel)
 ```
 
 ```{r}
-#| label: data import
-#| output: false
+#| label: data-import
+#| message: false
+
 # Set the path to the CSV file
 file_path <- "Crime_Data_from_2020_to_Present_20240607.csv"
 
@@ -40,18 +44,19 @@ file_path <- "Crime_Data_from_2020_to_Present_20240607.csv"
 crime_data <- read.csv(file_path)
 
 # View the first few rows of the data
-head(crime_data)
+datatable(head(crime_data))
 ```
 
 ```{r}
 #| label: data-cleaning - keep selected column
-#| output: false
+#| message: false
 
+# Select the required columns
 crime_data <- crime_data |>
   select(Date.Rptd, DATE.OCC, TIME.OCC, AREA, AREA.NAME, Rpt.Dist.No, Crm.Cd, Crm.Cd.Desc, Crm.Cd.1, Crm.Cd.2, Crm.Cd.3, Crm.Cd.4, LOCATION, Cross.Street, LAT, LON)
 
 # View the first few rows of the modified data
-head(crime_data)
+datatable(head(crime_data))
 ```
 
 ```{r}
@@ -81,7 +86,7 @@ cleaned_crime_data <- cleaned_crime_data %>%
   mutate(across(where(is.character), replace_multiple_spaces))
 
 # View the first few rows of the cleaned data
-head(cleaned_crime_data)
+datatable(head(cleaned_crime_data))
 ```
 
 ```{r}
@@ -99,7 +104,7 @@ cleaned_crime_data <- cleaned_crime_data %>%
   )
 
 cleaned_crime_data <- cleaned_crime_data %>%
-  select(Date.Rptd, DATE.OCC, DATE.OCC.MONTH, DATE.OCC.YEAR, everything())
+  select(DATE.OCC, DATE.OCC.MONTH, DATE.OCC.YEAR, everything())
 
 # View the first few rows of the cleaned data with new columns
 datatable(head(cleaned_crime_data))
@@ -115,6 +120,7 @@ crime_counts_by_area <- cleaned_crime_data %>%
   group_by(AREA, AREA.NAME) %>%
   summarise(Crime_Count = n(), .groups = "drop")
 
+# Fix the AREA.NAME for areas with wrong names
 crime_counts_by_area[8, "AREA.NAME"] <- "WEST LOS ANGELES"
 crime_counts_by_area[15, "AREA.NAME"] <- "NORTH HOLLYWOOD"
 
@@ -122,7 +128,10 @@ crime_counts_by_area
 ```
 
 ```{r}
-# Based of crime code, find top 5 crime codes and the corresponding crime description based on each area
+#| label: data-preparation - top 3 crimes by area
+#| message: false
+
+# Based of crime code, find top 3 crime codes and the corresponding crime description based on each area
 top_crime_codes_by_area <- cleaned_crime_data %>%
   mutate(AREA.NAME = toupper(AREA.NAME)) %>%
   mutate(
@@ -138,7 +147,8 @@ top_crime_codes_by_area <- cleaned_crime_data %>%
 
 top_crime_codes_by_area
 ```
-
+### 2. Data Visualisation
+###### <span style="color: red;">This visualisation below is for the team's reference only. Kindly ignore.</span>
 ```{r}
 #| label: data-visualisation - total crimes by area
 #| message: false
@@ -155,11 +165,14 @@ crime_counts_by_area_map
 ```
 
 ```{r}
-#| label: data-preparation - centroids
-#| warning: false
+#| label: data-visualisation - centroids
+#| message: false
+#| output: false
 
+# Read the LA city boundary shapefile
 la <- st_read("City_Boundary.geojson")
 
+# Calculate the centroids of the LA city boundary
 la_centroids <- la %>%
   st_centroid() %>%
   rename(centroids = geometry) %>%
@@ -180,7 +193,8 @@ top_crimes_la_count <- top_crime_codes_by_area %>%
 ```
 
 ```{r}
-#| label: data-preparation - jitter coords for top 5 crimes
+#| label: data-visualisation - jitter coords for top 3 crimes
+#| message: false
 
 # Define the number of points and radius for the circular spread
 n_points <- 3 # Number of top crimes
@@ -211,7 +225,10 @@ top_crimes_la_count <- top_crimes_la_count %>%
 ```
 
 ```{r}
-#| label: data-preparation - jitter coords for top 5 crimes (alternative)
+#| label: data-visualisation - jitter coords for top 3 crimes (alternative)
+#| message: false
+
+# Generate jittered coordinates for the top 3 crimes in each area
 top_crimes_la_count <- top_crimes_la_count %>%
   group_by(AREA) %>%
   mutate(
@@ -221,17 +238,18 @@ top_crimes_la_count <- top_crimes_la_count %>%
   ) %>%
   ungroup()
 ```
-
+###### <span style="color: red;">This visualisation below is for the team's reference only. Kindly ignore.</span>
 ```{r fig.height=15, fig.width=15}
-#| label: data-visualisation - number of top 5 crimes by area map
+#| label: data-visualisation - top 3 crimes by area map
+#| message: false
 
-# Plot the top 5 crime codes in each area map with jittered points
+# Plot the top 3 crime codes in each area map with jittered points
 top_crime_codes_by_area_map <- top_crime_codes_by_area %>%
   ggplot(aes(x = AREA, y = AREA.NAME, size = Crime_Count, colour = factor(Crm.Cd.Desc))) +
   geom_point(alpha = 0.5, position = position_jitter(width = 0.9, height = 0.8)) +
   scale_size_continuous(name = "Crime Count", range = c(2, 12)) +
   scale_colour_viridis_d(name = "Crime Type", option = "turbo", begin = 0.6, end = 1) +
-  labs(title = "Number of Top 5 Crimes in Each Area", x = "Area", y = "Area Name") +
+  labs(title = "Top 3 Crimes in Each Area", x = "Area", y = "Area Name") +
   theme_minimal() +
   theme(
     plot.title = element_text(size = 25, face = "bold"),
@@ -247,64 +265,10 @@ top_crime_codes_by_area_map <- top_crime_codes_by_area %>%
 top_crime_codes_by_area_map
 ```
 
-```{r fig.height=15, fig.width=15}
-#| label: data-visualisation - number of top 5 crimes and total crimes by area using geom_sf
-
-# Define a set of shapes to use
-shape_values <- c("\U1F52A", "\U1F44A", "\U1F3E0", "\U1F513", "\U1F494", "\U1F6CD", "\U1F3AD", "\U1F4B8", "\U1F58C", "\U1F693")
-
-# Plot the number of top 5 crimes and total crimes in each area map using geom_sf
-top_crime_codes_by_area_map_sf <- ggplot() +
-  geom_sf(data = la_count, aes(fill = Crime_Count)) +
-  geom_point(data = la_count, aes(x = long_center - 500, y = lat_center - 500), color = "black", size = 3, show.legend = FALSE) +
-  geom_point(
-    data = top_crimes_la_count,
-    aes(x = jittered_long, y = jittered_lat, shape = factor(Crm.Cd.Desc)), size = 3.5
-  ) +
-  geom_segment(
-    data = top_crimes_la_count, aes(x = long_center, y = lat_center, xend = jittered_long, yend = jittered_lat),
-    color = "black"
-  ) +
-  scale_shape_manual(name = "Crime Type", values = shape_values) +
-  #  scale_size_continuous(name = "Crime Count per Crime Type",
-  #                        range = c(5, 5)) +
-  scale_fill_gradient(
-    low = "#fee8c8",
-    high = "#e34a33",
-    name = "Total Crime Count",
-    limits = c(25000, 65000),
-    breaks = c(30000, 40000, 50000, 60000),
-    labels = c("30k", "40k", "50k", "60k")
-  ) +
-  #  scale_colour_viridis_c(name = "Crime Count per Crime Type",
-  #                         option = "turbo",
-  #                         begin = 0.7,
-  #                         end = 1) +
-  #  labs(title = "Number of Top 5 Crimes and Total Crimes in Each Area of Los Angeles (LA)") +
-  theme_minimal() +
-  theme(
-    plot.title = element_text(size = 25, face = "bold"),
-    axis.title.x = element_blank(),
-    axis.title.y = element_blank(),
-    axis.text.x = element_blank(),
-    axis.text.y = element_blank(),
-    axis.ticks.x = element_blank(),
-    axis.ticks.y = element_blank(),
-    panel.grid.major = element_blank(),
-    panel.grid.minor = element_blank(),
-    legend.title = element_text(size = 15),
-    legend.text = element_text(size = 15)
-  ) +
-  guides(
-    shape = guide_legend(override.aes = list(size = 6)), # Adjust the size of the shapes in the legend
-    colour = guide_legend(override.aes = list(size = 6))
-  ) # Adjust the size of the points in the legend
-
-# Display the plot
-top_crime_codes_by_area_map_sf
-```
-
 ```{r}
+#| label: data-visualisation - abbreviations for area names
+#| message: false
+
 # Define a named vector with the abbreviations
 abbreviations <- c(
   "MISSION" = "MIS",
@@ -339,13 +303,8 @@ print(la_count)
 ```
 
 ```{r fig.height=25, fig.width=20}
-#| label: data-visualisation - number of top 5 crimes and total crimes by area using geom_sf with labels
+#| label: data-visualisation - number of top 3 crimes and total crimes by area using geom_sf with labels
 #| message: false
-
-# Load the required packages
-library(pals)
-library(RColorBrewer)
-library(ggrepel)
 
 # Define a set of colors to use for each crime type from the pals package
 color_values <- glasbey(n = 10)
@@ -362,7 +321,7 @@ custom_colors[replace_indices] <- new_colors
 # Ensure the palette has exactly 10 colors by selecting the first 10 colors after replacement
 custom_colors <- custom_colors[1:10]
 
-# Plot the number of top 5 crimes and total crimes in each area map using geom_sf
+# Plot the number of top 3 crimes and total crimes in each area map using geom_sf
 top_crime_codes_by_area_map_sf <- ggplot() +
   geom_sf(data = la_count, aes(fill = Crime_Count)) +
   geom_segment(
@@ -400,7 +359,7 @@ top_crime_codes_by_area_map_sf <- ggplot() +
   theme_minimal() +
   labs(title = "Top 3 Crimes and Total Crimes by Area in Los Angeles", caption = "Source: LAPD Divisions") +
   theme(
-    plot.title = element_text(size = 25, face = "bold", hjust = 0.5, margin = margin(b = -40)),
+    plot.title = element_text(size = 25, face = "bold", hjust = 0.5, margin = margin(b = -40)), # Adjust the size and position of the title
     axis.title.x = element_blank(),
     axis.title.y = element_blank(),
     axis.text.x = element_blank(),
@@ -414,12 +373,13 @@ top_crime_codes_by_area_map_sf <- ggplot() +
     legend.position = "bottom",
     plot.caption = element_text(size = 12, hjust = 0.5),
     legend.box.margin = margin(-80, 0, 0, 0),
-    plot.margin = margin(0, 0, 0, 0) # Reduce space around the plot
+    plot.margin = margin(0, 0, 0, 0)
   ) +
   guides(
     fill = guide_colorbar(barwidth = 10, barheight = 2, title.position = "top", order = 2), # Adjust the size of the color bar and place it first
     colour = guide_legend(override.aes = list(size = 6), direction = "vertical", order = 3), # Adjust the size of the points in the legend
   )
+
 # Display the plot
 top_crime_codes_by_area_map_sf
 ```
