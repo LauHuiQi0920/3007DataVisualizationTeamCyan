@@ -7,6 +7,7 @@ knitr:
     fig.align: center
 ---
 
+
 ## Team Cyan (P3) Group Project
 
 **Group Members:**  \
@@ -18,6 +19,7 @@ knitr:
 6. Joel Yong Cong Yi 2101208\
 
 ### 1. Data Preparation and Cleaning
+
 
 ```{r}
 #| output: false
@@ -423,3 +425,4 @@ top_crime_codes_by_area_map_sf <- ggplot() +
 # Display the plot
 top_crime_codes_by_area_map_sf
 ```
+
